@@ -1,0 +1,29 @@
+{
+    "name": "webminty/boost-webminty-guidelines",
+    "description": "Webminty Laravel & PHP coding guidelines for Laravel Boost",
+    "keywords": [
+        "webminty",
+        "laravel",
+        "boost",
+        "guidelines",
+        "coding-standards"
+    ],
+    "license": "MIT",
+    "require": {
+        "php": "^8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Webminty\\BoostWebmintyGuidelines\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Webminty\\BoostWebmintyGuidelines\\BoostWebmintyGuidelinesServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
