@@ -100,6 +100,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -136,28 +137,64 @@ final class HandleInertiaRequests extends Middleware
 ### Lazy Props
 
 ```php
-return Inertia::render('Tickets/Show', [
-    'ticket' => TicketResource::make($ticket),
+final class ShowController extends Controller
+{
+    public function __invoke(Request $request, Ticket $ticket): Response
+    {
+        return Inertia::render('Tickets/Show', [
+            'ticket' => TicketResource::make($ticket),
 
-    // Only loaded on explicit partial reload request
-    'comments' => Inertia::lazy(
-        fn () => CommentResource::collection($ticket->comments),
-    ),
+            // Only loaded on explicit partial reload request
+            'comments' => Inertia::lazy(
+                fn () => CommentResource::collection($ticket->comments),
+            ),
 
-    // Always included, even on partial reloads
-    'permissions' => Inertia::always(
-        fn () => [
-            'canEdit' => $request->user()->can('update', $ticket),
-            'canDelete' => $request->user()->can('delete', $ticket),
-        ],
-    ),
-]);
+            // Always included, even on partial reloads
+            'permissions' => Inertia::always(
+                fn () => [
+                    'canEdit' => $request->user()->can('update', $ticket),
+                    'canDelete' => $request->user()->can('delete', $ticket),
+                ],
+            ),
+        ]);
+    }
+}
 ```
 
 ### When to Use
 - `Inertia::lazy()` — Data that is expensive to compute and not needed on initial page load (e.g., comments, activity logs, related items). The frontend must explicitly request it.
 - `Inertia::always()` — Data that must always be fresh, even during partial reloads (e.g., permissions, notification counts).
 - Default (no wrapper) — Data that should load on every full page visit.
+
+### Prop Types Summary
+
+| Method | Behavior |
+|--------|----------|
+| Default (no wrapper) | Included on every full page visit |
+| `Inertia::lazy()` | Excluded on first visit, loaded only on explicit partial reload |
+| `Inertia::defer()` | Loaded in a separate request after the initial page load |
+| `Inertia::optional()` | Included on first visit, excluded on subsequent partial reloads unless explicitly requested |
+| `Inertia::always()` | Always included, even during partial reloads |
+| `Inertia::merge()` | Merges with existing prop data instead of replacing (useful for infinite scroll) |
+
+```php
+// Deferred — loaded after initial page render
+'notifications' => Inertia::defer(
+    fn () => NotificationResource::collection($user->notifications),
+),
+
+// Optional — included on first visit, excluded on partial reloads unless requested
+'stats' => Inertia::optional(
+    fn () => StatsResource::make($ticket),
+),
+
+// Merge — appends to existing data (infinite scroll / pagination)
+'tickets' => Inertia::merge(
+    fn () => TicketResource::collection(
+        Ticket::query()->paginate(15),
+    ),
+),
+```
 
 ---
 

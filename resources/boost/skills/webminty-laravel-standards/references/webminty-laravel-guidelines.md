@@ -161,7 +161,7 @@ if ($name !== null) { }
 
 ### Method Naming
 - General methods: camelCase, verb-first (`execute`, `authenticate`, `generateSlug`)
-- Query scopes: camelCase, prefixed with `scope` or use `#[Scope]` attribute
+- Query scopes: use `#[Scope]` attribute (preferred over legacy `scopeX()` prefix)
 - Relationships: singular for belongsTo/hasOne, plural for hasMany/belongsToMany
 
 ### Database Naming
@@ -690,8 +690,8 @@ use Illuminate\Support\Facades\Route;
 Route::view('/', 'welcome');
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');
+    Route::get('/dashboard', DashboardController::class)->name('dashboard');
+    Route::get('/tickets', TicketIndexController::class)->name('tickets.index');
 });
 
 require __DIR__ . '/auth.php';
@@ -716,7 +716,7 @@ require __DIR__ . '/auth.php';
 ### Route Model Binding
 
 ```php
-Route::get('/tickets/{ticket:hash_id}', [TicketController::class, 'show']);
+Route::get('/tickets/{ticket:hash_id}', TicketShowController::class);
 ```
 
 ### Key Rules

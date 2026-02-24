@@ -1,5 +1,6 @@
 {
     "name": "webminty/boost-webminty-guidelines",
+    "type": "library",
     "description": "Webminty Laravel & PHP coding guidelines for Laravel Boost",
     "keywords": [
         "webminty",
@@ -9,6 +10,13 @@
         "coding-standards"
     ],
     "license": "MIT",
+    "homepage": "https://webminty.com",
+    "authors": [
+        {
+            "name": "Webminty",
+            "homepage": "https://webminty.com"
+        }
+    ],
     "require": {
         "php": "^8.2",
         "illuminate/support": "^11.0|^12.0"
@@ -25,6 +33,9 @@
             ]
         }
     },
-    "minimum-stability": "dev",
+    "suggest": {
+        "laravel/boost": "Required for AI skill discovery and activation"
+    },
+    "minimum-stability": "stable",
     "prefer-stable": true
 }

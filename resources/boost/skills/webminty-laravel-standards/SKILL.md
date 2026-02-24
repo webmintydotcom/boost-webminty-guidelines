@@ -58,15 +58,15 @@ Do:
 - Use architecture tests to enforce coding standards.
 
 Don't:
-- Use `$fillable` instead of `$guarded`.
-- Use the `$casts` property instead of the `casts()` method.
-- Use `scopeX()` prefix instead of the `#[Scope]` attribute.
+- Use `$fillable` — use `$guarded = ['id']` instead.
+- Use the `$casts` property — use the `casts()` method instead.
+- Use `scopeX()` methods — use the `#[Scope]` attribute instead.
 - Put business logic in controllers.
 - Use `env()` outside config files.
 - Use pipe syntax for validation rules.
 - Skip `declare(strict_types=1)`.
 - Skip `final` on classes.
-- Use `dd()`, `dump()`, `ray()`, or `var_dump()` in committed code.
+- Use `dd()`, `dump()`, `ray()`, `var_dump()`, or `print_r` in committed code.
 
 ## Examples
 ```php

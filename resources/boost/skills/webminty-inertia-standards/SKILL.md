@@ -19,7 +19,7 @@ Apply Webminty's Inertia guidelines for projects using Inertia.js as the fronten
 - Activate this skill when creating or editing Inertia-related routes.
 
 ## Scope
-- In scope: Inertia controllers, `Inertia::render()`, `HandleInertiaRequests` middleware, shared props, partial reloads (`Inertia::lazy()`, `Inertia::always()`), Inertia redirects, Inertia testing with `assertInertia()`.
+- In scope: Inertia controllers, `Inertia::render()`, `HandleInertiaRequests` middleware, shared props, partial reloads and prop types (`Inertia::lazy()`, `Inertia::defer()`, `Inertia::optional()`, `Inertia::always()`, `Inertia::merge()`), Inertia redirects, Inertia testing with `assertInertia()`.
 - Out of scope: Core PHP/Laravel standards (see `webminty-laravel-standards`), frontend framework conventions (React, Vue, Svelte components, TypeScript, state management).
 
 ## Workflow
@@ -31,8 +31,7 @@ Apply Webminty's Inertia guidelines for projects using Inertia.js as the fronten
 - Controllers return `Inertia::render('PageName', [...props])`.
 - Page component names use PascalCase path notation: `Tickets/Show`.
 - Share common data via `HandleInertiaRequests::share()`.
-- Use `Inertia::lazy()` for data that should only load on partial reloads.
-- Use `Inertia::always()` for data that must always be included.
+- Use `Inertia::lazy()`, `Inertia::defer()`, `Inertia::optional()`, `Inertia::always()`, and `Inertia::merge()` for controlling when props are loaded.
 - Redirects use standard Laravel `redirect()->route()` — Inertia handles them automatically.
 - Use Form Requests for validation — Inertia handles 422 responses automatically.
 - Delegate business logic to Actions, not controllers.

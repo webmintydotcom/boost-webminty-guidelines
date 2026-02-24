@@ -21,10 +21,10 @@ Livewire 4 supports three component formats. Prefer single-file for most compone
 
 ### Single-File Component (Preferred)
 
-Single-file components combine PHP and Blade in one `.wire.php` file:
+Single-file components combine PHP and Blade in one `.blade.php` file:
 
 ```php
-{{-- resources/views/components/dashboard.wire.php --}}
+{{-- resources/views/components/dashboard.blade.php --}}
 <?php
 
 use Livewire\Attributes\Layout;
@@ -45,7 +45,7 @@ class extends Component {
 ### Single-File Component with Data
 
 ```php
-{{-- resources/views/components/ticket-list.wire.php --}}
+{{-- resources/views/components/ticket-list.blade.php --}}
 <?php
 
 use App\Models\Ticket;
@@ -115,7 +115,7 @@ Organizes PHP, Blade, JS, and tests in a dedicated directory:
 
 ```
 resources/views/components/ticket-list/
-├── ticket-list.wire.php    # PHP + Blade
+├── ticket-list.blade.php    # PHP + Blade
 ├── ticket-list.js          # JavaScript (optional)
 └── ticket-list.test.php    # Tests (optional)
 ```
@@ -137,6 +137,7 @@ php artisan livewire:convert ticket-list --mfc    # Convert to multi-file
 - Use `#[Title]` and `#[Layout]` attributes on all full-page components
 - Keep components thin — delegate business logic to Actions
 - Use `declare(strict_types=1)` in class-based components
+- `declare(strict_types=1)` cannot be used in single-file components due to the combined PHP/Blade format — this is the one exception to the strict types rule
 
 ---
 
@@ -146,38 +147,55 @@ php artisan livewire:convert ticket-list --mfc    # Convert to multi-file
 |-----------|---------|---------|
 | `#[Title('...')]` | Set page title | `#[Title('Dashboard')]` |
 | `#[Layout('...')]` | Set layout component | `#[Layout('components.layouts.app')]` |
-| `#[Prop]` | Accept and forward attributes from parent | `#[Prop] public string $variant = 'primary'` |
+| `#[Reactive]` | Keep child property in sync with parent | `#[Reactive] public string $filter = ''` |
 | `#[Url]` | Bind property to query string | `#[Url] public string $search = ''` |
 | `#[Locked]` | Prevent client modification | `#[Locked] public int $userId` |
 | `#[On('event-name')]` | Listen for events | `#[On('ticket-created')] public function refresh()` |
 | `#[Computed]` | Cache derived data for request lifecycle | `#[Computed] public function total(): int` |
 | `#[Validate('...')]` | Inline validation rule | `#[Validate('required\|string')]` |
 
-### #[Prop] Attribute (New in v4)
+### #[Reactive] Attribute
 
-Forward attributes from parent components, similar to Blade component attributes:
+Mark a child component's public property as reactive so it stays in sync when the parent re-renders. Without `#[Reactive]`, a property passed from a parent is only set once during `mount()` and will not update when the parent changes.
 
 ```php
+{{-- Parent component --}}
 <?php
 
-use Livewire\Attributes\Prop;
 use Livewire\Component;
 
 new class extends Component {
-    #[Prop]
-    public string $variant = 'primary';
-
-    #[Prop]
-    public string $size = 'md';
+    public string $filter = '';
 };
 ?>
 
-<button {{ $attributes->class(["btn-{$this->variant}", "btn-{$this->size}"]) }}>
-    {{ $slot }}
-</button>
+<div>
+    <input type="text" wire:model.live="filter">
+    <livewire:ticket-list :filter="$filter" />
+</div>
 ```
 
-Note: Props are captured on initial render and memoized. Later changes from the parent won't propagate.
+```php
+{{-- Child component (ticket-list.blade.php) --}}
+<?php
+
+use Livewire\Attributes\Reactive;
+use Livewire\Component;
+
+new class extends Component {
+    #[Reactive]
+    public string $filter = '';
+
+    // $filter updates automatically when the parent's $filter changes
+};
+?>
+
+<div>
+    {{-- Use $this->filter, which stays in sync with the parent --}}
+</div>
+```
+
+Pass data from parent to child via public properties and the `mount()` method. Use `#[Reactive]` when the child must track ongoing changes from the parent.
 
 ### Computed Properties
 
@@ -461,7 +479,7 @@ $this->redirect(route('tickets.index'), navigate: true);
 
 ### wire:ref (New in v4)
 
-Reference child components from a parent:
+Name a child component for targeted dispatching and streaming:
 
 ```blade
 <div>
@@ -473,7 +491,7 @@ Reference child components from a parent:
 </div>
 ```
 
-Access the child via `$this->$refs->modal->someMethod()` in PHP or `$refs.modal.$wire` in JavaScript.
+In PHP, target a ref with `$this->dispatch('event')->to(ref: 'modal')` or `$this->stream($content)->to(ref: 'modal')`. In JavaScript, access the child via `this.$refs.modal.$wire`.
 
 ### wire:transition (New in v4)
 
@@ -518,7 +536,7 @@ Prefer the `data-loading` CSS approach for simple loading states. Use `wire:load
 
 | What | Convention | Example |
 |------|-----------|---------|
-| Single-file components | kebab-case with `.wire.php` suffix | `ticket-list.wire.php` |
+| Single-file components | kebab-case with `.blade.php` suffix | `ticket-list.blade.php` |
 | Class-based components | PascalCase | `TicketList.php` |
 | Form objects | PascalCase, suffixed with `Form` | `LoginForm`, `TicketForm` |
 | Component views (class-based) | kebab-case in `livewire/` | `livewire/ticket-list.blade.php` |
@@ -534,14 +552,14 @@ Prefer the `data-loading` CSS approach for simple loading states. Use `wire:load
 resources/views/components/
 ├── layouts/
 │   └── app.blade.php
-├── dashboard.wire.php
-├── ticket-list.wire.php
+├── dashboard.blade.php
+├── ticket-list.blade.php
 ├── auth/
-│   ├── login.wire.php
-│   └── register.wire.php
+│   ├── login.blade.php
+│   └── register.blade.php
 └── tickets/
-    ├── create.wire.php
-    └── show.wire.php
+    ├── create.blade.php
+    └── show.blade.php
 
 app/Livewire/
 └── Forms/

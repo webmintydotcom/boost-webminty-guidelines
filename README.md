@@ -75,8 +75,8 @@ Skills activate automatically based on context, ensuring consistent adherence to
 
 The complete guidelines are available: [https://github.com/webmintydotcom/standards](https://github.com/webmintydotcom/standards)
 
-For a Laravel Quickstart: https://github.com/webmintydotcom/laravel-quickstart
+For a Laravel Quickstart: [https://github.com/webmintydotcom/laravel-quickstart](https://github.com/webmintydotcom/laravel-quickstart)
 
-# Thank you
+## Thank you
 
 [Webminty](https://webminty.com) team
