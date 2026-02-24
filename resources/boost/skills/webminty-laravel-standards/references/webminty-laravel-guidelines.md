@@ -11,7 +11,6 @@
 - [Actions](#actions)
 - [Controllers](#controllers)
 - [Routes](#routes)
-- [Livewire](#livewire)
 - [Blade Templates](#blade-templates)
 - [Jobs](#jobs)
 - [Commands](#commands)
@@ -159,8 +158,6 @@ if ($name !== null) { }
 - **DTOs**: PascalCase, suffixed with `Data` (`TicketData`, `PlanData`)
 - **Enums**: PascalCase, singular (`Status`, `WeightTypes`)
 - **Traits**: PascalCase, prefixed with `Has` (`HasHashIds`, `HasActiveInactive`)
-- **Livewire Components**: PascalCase, descriptive (`Dashboard`, `TicketList`)
-- **Livewire Forms**: PascalCase, suffixed with `Form` (`LoginForm`)
 
 ### Method Naming
 - General methods: camelCase, verb-first (`execute`, `authenticate`, `generateSlug`)
@@ -189,12 +186,9 @@ app/
 ├── Data/                 # Spatie LaravelData DTOs
 ├── Enums/                # PHP 8.1+ Enums
 ├── Http/
-│   ├── Controllers/      # HTTP controllers (minimal with Livewire)
+│   ├── Controllers/      # HTTP controllers
 │   ├── Middleware/        # Custom middleware
 │   └── Requests/         # Form request validation
-├── Livewire/
-│   ├── Actions/          # Livewire-specific actions
-│   └── Forms/            # Livewire form classes
 ├── Models/
 │   └── Traits/           # Reusable model traits
 ├── Observers/            # Model lifecycle observers
@@ -211,7 +205,8 @@ database/
 resources/views/
 ├── components/           # Anonymous Blade components
 ├── layouts/              # Layout templates
-└── livewire/             # Livewire component views
+├── pages/                # Page views
+└── partials/             # Reusable partials
 
 routes/
 ├── web.php               # Web routes
@@ -695,8 +690,8 @@ use Illuminate\Support\Facades\Route;
 Route::view('/', 'welcome');
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
-    Route::get('/dashboard', Dashboard::class)->name('dashboard');
-    Route::get('/tickets', TicketList::class)->name('tickets.index');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');
 });
 
 require __DIR__ . '/auth.php';
@@ -721,97 +716,14 @@ require __DIR__ . '/auth.php';
 ### Route Model Binding
 
 ```php
-Route::get('/tickets/{ticket:hash_id}', TicketShow::class);
+Route::get('/tickets/{ticket:hash_id}', [TicketController::class, 'show']);
 ```
 
 ### Key Rules
-- Use Livewire components or single-action controllers for route targets
+- Use single-action controllers or resource controllers for route targets
 - Group routes by middleware
 - Separate auth routes into `routes/auth.php`
 - Avoid logic in route files
-
----
-
-## Livewire
-
-### Component Structure
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Livewire;
-
-use Illuminate\Contracts\View\View;
-use Livewire\Attributes\Layout;
-use Livewire\Attributes\Title;
-use Livewire\Component;
-
-#[Title('Dashboard')]
-#[Layout('components.layouts.app')]
-final class Dashboard extends Component
-{
-    public function render(): View
-    {
-        return view('livewire.dashboard');
-    }
-}
-```
-
-### Key Rules
-- Components must be `final`
-- Use `#[Title]` and `#[Layout]` attributes
-- Use `#[Url]` for query string binding
-- Use `#[Locked]` to prevent client modification
-- Use `#[On('event-name')]` for event listeners
-- Use `#[Computed]` for derived data
-- Use `#[Validate]` for property validation
-
-### Form Objects
-
-```php
-final class LoginForm extends Form
-{
-    #[Validate('required|string|email')]
-    public string $email = '';
-
-    #[Validate('required|string')]
-    public string $password = '';
-
-    public function authenticate(): void
-    {
-        $this->ensureIsNotRateLimited();
-        // ...
-    }
-}
-```
-
-### Navigation
-
-```php
-// SPA-style redirect
-$this->redirect(route('dashboard'), navigate: true);
-```
-
-```blade
-{{-- SPA-style link --}}
-<a href="{{ route('dashboard') }}" wire:navigate>Dashboard</a>
-```
-
-### File Structure
-
-```
-app/Livewire/
-├── Auth/
-│   ├── Login.php
-│   └── Register.php
-├── Forms/
-│   ├── LoginForm.php
-│   └── TicketForm.php
-├── Dashboard.php
-└── TicketList.php
-```
 
 ---
 
@@ -832,7 +744,7 @@ Prefer `x-` component syntax over `@include`:
 ```
 
 ### Data Handling
-- All data should come from controllers or Livewire components
+- All data should come from controllers
 - No Eloquent queries in views
 - Simple formatting is acceptable: `{{ $date->format('M j, Y') }}`
 
@@ -1253,11 +1165,6 @@ arch()
     ->toExtend('Spatie\LaravelData\Data')
     ->toBeFinal();
 
-arch()
-    ->expect('App\Livewire')
-    ->toExtend('Livewire\Component')
-    ->toBeFinal();
-
 arch()->preset()->php();
 arch()->preset()->security()->ignoring('md5');
 arch()->preset()->laravel();
@@ -1279,18 +1186,6 @@ test('can create a ticket with all fields', function (): void {
     expect($ticket)
         ->toBeInstanceOf(Ticket::class)
         ->title->toBe('Test Ticket');
-});
-```
-
-### Testing Livewire
-
-```php
-test('can render ticket list', function (): void {
-    $user = User::factory()->create();
-
-    Livewire::actingAs($user)
-        ->test(TicketList::class)
-        ->assertOk();
 });
 ```
 
@@ -1342,14 +1237,12 @@ final class TicketFactory extends Factory
 - Actions: `final class VerbNoun { public function execute(): ... }`
 - Models: `final class Noun extends Model` with `$guarded = ['id']` and `casts()` method
 - DTOs: `final class NounData extends Data`
-- Livewire: `final class Noun extends Component` with `#[Title]` and `#[Layout]`
 - Jobs: `final class VerbNoun implements ShouldQueue`
 - Commands: `final class VerbNoun extends Command` with `app:kebab-case` signature
 
 ### Validation
 - Always use array syntax: `['required', 'string', 'max:255']`
 - Use Form Requests for controllers
-- Use `#[Validate]` attributes for Livewire
 
 ### Database
 - `$guarded = ['id']` not `$fillable`

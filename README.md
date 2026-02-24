@@ -17,7 +17,15 @@ The package auto-discovers via Laravel's package discovery — no additional set
 
 ## What It Does
 
-This package registers the **webminty-laravel-standards** skill with Laravel Boost. The skill activates automatically when an AI assistant creates, edits, reviews, refactors, or formats Laravel/PHP code, ensuring consistent adherence to Webminty's conventions.
+This package registers three skills with Laravel Boost:
+
+| Skill | Activates When |
+|---|---|
+| **webminty-laravel-standards** | Writing, editing, or reviewing any Laravel/PHP code |
+| **webminty-livewire-standards** | Working on Livewire components, form objects, or `wire:` directives |
+| **webminty-inertia-standards** | Working on controllers returning Inertia responses, shared data, or Inertia testing |
+
+Skills activate automatically based on context, ensuring consistent adherence to Webminty's conventions regardless of frontend stack.
 
 ## Standards Overview
 
@@ -36,7 +44,6 @@ This package registers the **webminty-laravel-standards** skill with Laravel Boo
 - **Actions** — Single-purpose `final` classes with an `execute()` method for business logic
 - **Controllers** — Thin controllers that delegate to Actions; Form Requests for validation
 - **DTOs** — Extend `Spatie\LaravelData\Data`, always `final`
-- **Livewire** — `final` components with `#[Title]` and `#[Layout]` attributes; Form objects for state
 - **Routes** — Kebab-case URLs, dot-notation names, RESTful conventions
 - **Migrations** — Anonymous classes, `hash_id` pattern, boolean columns prefixed with `is_`/`has_`
 - **Testing** — Pest PHP with `test()` syntax, architecture tests to enforce standards

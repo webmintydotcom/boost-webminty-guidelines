@@ -1,6 +1,6 @@
 ---
 name: webminty-laravel-standards
-description: Apply Webminty's Laravel and PHP coding standards for any task that creates, edits, reviews, refactors, or formats Laravel/PHP code or Blade templates; use for controllers, Eloquent models, routes, config, validation, migrations, tests, actions, Livewire components, jobs, and related files to align with Laravel conventions, PSR-12, and Webminty project patterns.
+description: Apply Webminty's Laravel and PHP coding standards for any task that creates, edits, reviews, refactors, or formats Laravel/PHP code or Blade templates; use for controllers, Eloquent models, routes, config, validation, migrations, tests, actions, jobs, DTOs, and related files to align with Laravel conventions, PSR-12, and Webminty project patterns.
 license: MIT
 metadata:
   author: Webminty
@@ -9,26 +9,26 @@ metadata:
 # Webminty Laravel & PHP Guidelines
 
 ## Overview
-Apply Webminty's Laravel and PHP guidelines to keep code style consistent and Laravel-native. These standards cover PHP conventions, Laravel architecture patterns, Livewire components, testing with Pest, and project structure.
+Apply Webminty's Laravel and PHP guidelines to keep code style consistent and Laravel-native. These standards cover PHP conventions, Laravel architecture patterns, testing with Pest, and project structure.
 
 ## When to Activate
 - Activate this skill for any Laravel or PHP coding work, even if the user does not explicitly mention Webminty.
 - Activate this skill when asked to generate, edit, format, refactor, review, or align Laravel/PHP code.
-- Activate this skill when working on `.php` or `.blade.php` files, routes, controllers, models, config, validation, migrations, tests, actions, Livewire components, jobs, or Data objects.
+- Activate this skill when working on `.php` or `.blade.php` files, routes, controllers, models, config, validation, migrations, tests, actions, jobs, or Data objects.
 
 ## Scope
-- In scope: `.php`, `.blade.php`, Laravel conventions (routes, controllers, config, validation, migrations, tests, actions, Livewire, jobs, DTOs, enums, commands, API).
-- Out of scope: JS/TS, CSS, infrastructure, database schema design, non-Laravel frameworks.
+- In scope: `.php`, `.blade.php`, Laravel conventions (routes, controllers, config, validation, migrations, tests, actions, jobs, DTOs, enums, commands, API).
+- Out of scope: JS/TS, CSS, infrastructure, database schema design, non-Laravel frameworks, frontend-stack-specific patterns (see `webminty-livewire-standards` or `webminty-inertia-standards` skills).
 
 ## Workflow
-1. Identify the artifact (action, controller, model, Livewire component, Blade, test, job, DTO, enum, route, migration, etc.).
+1. Identify the artifact (action, controller, model, Blade, test, job, DTO, enum, route, migration, etc.).
 2. Read `references/webminty-laravel-guidelines.md` and focus on the relevant sections.
 3. Apply the core Laravel principle first, then PHP standards, then section-specific rules.
 4. If a rule conflicts with existing project conventions, follow Laravel conventions and keep changes consistent.
 
 ## Core Rules (Summary)
 - Follow Laravel conventions first.
-- Follow PSR-1, PSR-2, and PSR-12.
+- Follow PSR-12 (includes PSR-1).
 - Every PHP file must have `declare(strict_types=1)`.
 - All classes should be `final` by default.
 - Use typed properties and explicit return types (including `void`).
@@ -42,7 +42,6 @@ Apply Webminty's Laravel and PHP guidelines to keep code style consistent and La
 - Use the `#[Scope]` attribute for query scopes (Laravel 11+).
 - Actions are `final` classes with a single `execute()` method.
 - DTOs extend `Spatie\LaravelData\Data` and are `final`.
-- Livewire components are `final` with `#[Title]` and `#[Layout]` attributes.
 - Use Pest PHP for all tests with `test()` function syntax.
 - Use array notation for validation rules (not pipe syntax).
 
@@ -55,15 +54,14 @@ Do:
 - Use `hash_id` pattern for public-facing IDs.
 - Prefix boolean columns with `is_` or `has_`.
 - Use Form Requests for controller validation.
-- Delegate business logic to Actions from controllers and Livewire components.
-- Use Livewire Form objects for form state.
+- Delegate business logic to Actions from controllers.
 - Use architecture tests to enforce coding standards.
 
 Don't:
 - Use `$fillable` instead of `$guarded`.
 - Use the `$casts` property instead of the `casts()` method.
 - Use `scopeX()` prefix instead of the `#[Scope]` attribute.
-- Put business logic in controllers or Livewire components.
+- Put business logic in controllers.
 - Use `env()` outside config files.
 - Use pipe syntax for validation rules.
 - Skip `declare(strict_types=1)`.
@@ -103,19 +101,6 @@ final class Ticket extends Model
     protected function active(Builder $query): void
     {
         $query->where('is_active', true);
-    }
-}
-```
-
-```php
-// Livewire Component
-#[Title('Dashboard')]
-#[Layout('components.layouts.app')]
-final class Dashboard extends Component
-{
-    public function render(): View
-    {
-        return view('livewire.dashboard');
     }
 }
 ```
