@@ -917,6 +917,22 @@ Include version in URL:
 Route::prefix('api/v1')->group(function () { ... });
 ```
 
+- Always version APIs from the start (`v1`), even for internal APIs.
+- Use URL-based versioning (`/api/v1/...`) — not header-based versioning.
+- When introducing breaking changes, create a new version (`v2`) while keeping the previous version supported during a deprecation period.
+- Keep controller namespaces organized by version: `App\Http\Controllers\Api\V1\`, `App\Http\Controllers\Api\V2\`.
+- Route files can use separate groups or files per version for clarity.
+
+```
+app/Http/Controllers/Api/
+├── V1/
+│   ├── TicketController.php
+│   └── UserController.php
+└── V2/
+    ├── TicketController.php
+    └── UserController.php
+```
+
 ### Naming
 - Plural nouns for resource names: `/api/v1/tickets`
 - No verbs in URLs
@@ -1163,6 +1179,24 @@ arch()
 arch()
     ->expect('App\Data')
     ->toExtend('Spatie\LaravelData\Data')
+    ->toBeFinal();
+
+arch()
+    ->expect('App\Http\Controllers')
+    ->toBeFinal();
+
+arch()
+    ->expect('App\Enums')
+    ->toBeEnums();
+
+arch()
+    ->expect('App\Jobs')
+    ->toImplement('Illuminate\Contracts\Queue\ShouldQueue')
+    ->toBeFinal();
+
+arch()
+    ->expect('App\Http\Requests')
+    ->toExtend('Illuminate\Foundation\Http\FormRequest')
     ->toBeFinal();
 
 arch()->preset()->php();

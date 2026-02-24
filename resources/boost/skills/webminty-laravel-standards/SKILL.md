@@ -42,6 +42,7 @@ Apply Webminty's Laravel and PHP guidelines to keep code style consistent and La
 - Use the `#[Scope]` attribute for query scopes (Laravel 11+).
 - Actions are `final` classes with a single `execute()` method.
 - DTOs extend `Spatie\LaravelData\Data` and are `final`.
+- Use backed enums (`enum Status: int`) with PascalCase cases; cast enum columns in the model's `casts()` method.
 - Use Pest PHP for all tests with `test()` function syntax.
 - Use array notation for validation rules (not pipe syntax).
 

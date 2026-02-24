@@ -19,7 +19,7 @@ Apply Webminty's Inertia guidelines for projects using Inertia.js as the fronten
 - Activate this skill when creating or editing Inertia-related routes.
 
 ## Scope
-- In scope: Inertia controllers, `Inertia::render()`, `HandleInertiaRequests` middleware, shared props, partial reloads and prop types (`Inertia::lazy()`, `Inertia::defer()`, `Inertia::optional()`, `Inertia::always()`, `Inertia::merge()`), Inertia redirects, Inertia testing with `assertInertia()`.
+- In scope: Inertia controllers, `Inertia::render()`, `HandleInertiaRequests` middleware, shared props, partial reloads and prop types (`Inertia::lazy()`, `Inertia::defer()`, `Inertia::optional()`, `Inertia::always()`, `Inertia::merge()`), `Inertia::defer()` deferred props, SSR configuration (Laravel side), Inertia redirects, Inertia testing with `assertInertia()`.
 - Out of scope: Core PHP/Laravel standards (see `webminty-laravel-standards`), frontend framework conventions (React, Vue, Svelte components, TypeScript, state management).
 
 ## Workflow

@@ -18,7 +18,7 @@ Apply Webminty's Livewire 4 guidelines for projects using Livewire as the fronte
 - Activate this skill when writing tests that use `Livewire::test()`.
 
 ## Scope
-- In scope: Livewire single-file and class-based components, form objects, islands, slots, `#[Reactive]` attribute, Livewire attributes (`#[Title]`, `#[Layout]`, `#[Validate]`, `#[Computed]`, `#[Url]`, `#[Locked]`, `#[On]`), `wire:` directives (`wire:model`, `wire:click`, `wire:navigate`, `wire:ref`, `wire:transition`), `data-loading` states, Livewire navigation, Livewire testing.
+- In scope: Livewire single-file and class-based components, form objects, islands, slots, `#[Reactive]` attribute, `#[Modelable]` attribute, Livewire attributes (`#[Title]`, `#[Layout]`, `#[Validate]`, `#[Computed]`, `#[Url]`, `#[Locked]`, `#[On]`), `wire:` directives (`wire:model`, `wire:click`, `wire:navigate`, `wire:ref`, `wire:transition`, `wire:confirm`, `wire:dirty`, `wire:offline`), `data-loading` states, Livewire navigation, Livewire testing.
 - Out of scope: Core PHP/Laravel standards (see `webminty-laravel-standards`), non-Livewire frontend stacks.
 
 ## Workflow
@@ -32,6 +32,7 @@ Apply Webminty's Livewire 4 guidelines for projects using Livewire as the fronte
 - Note: `declare(strict_types=1)` cannot be used in single-file components (combined PHP/Blade format) — this is the one exception to the strict types rule.
 - Use `#[Title]` and `#[Layout]` attributes on full-page components.
 - Use `#[Reactive]` on child component properties that should update when the parent re-renders.
+- Use `#[Modelable]` on child component properties for two-way parent-child binding via `wire:model`.
 - Use `#[Url]` for query string binding.
 - Use `#[Locked]` to prevent client modification of sensitive properties.
 - Use `#[On('event-name')]` for event listeners.

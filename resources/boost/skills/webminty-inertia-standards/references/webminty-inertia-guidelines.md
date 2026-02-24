@@ -8,6 +8,7 @@
 - [Redirects](#redirects)
 - [Routes](#routes)
 - [Directory Structure](#directory-structure)
+- [Server-Side Rendering (SSR)](#server-side-rendering-ssr)
 - [Testing](#testing)
 
 ---
@@ -165,6 +166,37 @@ final class ShowController extends Controller
 - `Inertia::lazy()` — Data that is expensive to compute and not needed on initial page load (e.g., comments, activity logs, related items). The frontend must explicitly request it.
 - `Inertia::always()` — Data that must always be fresh, even during partial reloads (e.g., permissions, notification counts).
 - Default (no wrapper) — Data that should load on every full page visit.
+
+### Deferred Props
+
+`Inertia::defer()` loads data in a separate request **after** the initial page renders. The page loads immediately with its core data, and the deferred props are fetched automatically in the background. No extra client-side code is needed — Inertia triggers the follow-up request on its own.
+
+```php
+final class ShowController extends Controller
+{
+    public function __invoke(Request $request, Ticket $ticket): Response
+    {
+        return Inertia::render('Tickets/Show', [
+            'ticket' => TicketResource::make($ticket),
+
+            // Loaded automatically after initial page render
+            'activityLog' => Inertia::defer(
+                fn () => ActivityResource::collection($ticket->activities()->latest()->get()),
+            ),
+
+            // Group related deferred props to batch them in one request
+            'notifications' => Inertia::defer(
+                fn () => NotificationResource::collection($request->user()->unreadNotifications),
+            )->group('sidebar'),
+            'onlineUsers' => Inertia::defer(
+                fn () => UserResource::collection(User::online()->get()),
+            )->group('sidebar'),
+        ]);
+    }
+}
+```
+
+Use `Inertia::defer()` for data that is needed on the page but not critical for the first paint (e.g., activity logs, notifications, secondary panels). Use `->group()` to batch related deferred props into a single follow-up request.
 
 ### Prop Types Summary
 
@@ -348,6 +380,28 @@ resources/js/
 ```
 
 Page component paths in `Inertia::render()` map to the `resources/js/pages/` directory.
+
+---
+
+## Server-Side Rendering (SSR)
+
+Inertia supports server-side rendering for improved initial page load performance and SEO. SSR pre-renders pages on the server so users see content before JavaScript hydrates.
+
+### Laravel-Side Setup
+
+Publish the SSR configuration and enable it:
+
+```bash
+php artisan inertia:start-ssr
+```
+
+This starts a Node.js process alongside the Laravel application that renders pages on the server. The process must remain running in production (use a process manager like Supervisor or PM2).
+
+### Key Rules
+- Enable SSR in your Inertia configuration (`config/inertia.php`)
+- The `php artisan inertia:start-ssr` command starts the SSR server
+- SSR runs as a separate Node.js process — ensure it is managed by a process supervisor in production
+- Detailed SSR configuration (bundling, framework-specific setup) is frontend-specific and out of scope for this skill
 
 ---
 

@@ -77,6 +77,10 @@ The complete guidelines are available: [https://github.com/webmintydotcom/standa
 
 For a Laravel Quickstart: [https://github.com/webmintydotcom/laravel-quickstart](https://github.com/webmintydotcom/laravel-quickstart)
 
+## Changelog
+
+This package follows [Semantic Versioning](https://semver.org). See [CHANGELOG.md](CHANGELOG.md) for release history.
+
 ## Thank you
 
 [Webminty](https://webminty.com) team

@@ -153,6 +153,7 @@ php artisan livewire:convert ticket-list --mfc    # Convert to multi-file
 | `#[On('event-name')]` | Listen for events | `#[On('ticket-created')] public function refresh()` |
 | `#[Computed]` | Cache derived data for request lifecycle | `#[Computed] public function total(): int` |
 | `#[Validate('...')]` | Inline validation rule | `#[Validate('required\|string')]` |
+| `#[Modelable]` | Enable wire:model binding on child component property | `#[Modelable] public string $value = ''` |
 
 ### #[Reactive] Attribute
 
@@ -196,6 +197,47 @@ new class extends Component {
 ```
 
 Pass data from parent to child via public properties and the `mount()` method. Use `#[Reactive]` when the child must track ongoing changes from the parent.
+
+### #[Modelable] Attribute
+
+Mark a child component's public property as modelable to enable two-way data binding between parent and child via `wire:model`. Unlike `#[Reactive]` (which is one-way, parent-to-child), `#[Modelable]` allows the child to push changes back up to the parent.
+
+```php
+{{-- Parent component --}}
+<?php
+
+use Livewire\Component;
+
+new class extends Component {
+    public string $color = '#000000';
+};
+?>
+
+<div>
+    <livewire:color-picker wire:model="color" />
+    <p>Selected color: {{ $color }}</p>
+</div>
+```
+
+```php
+{{-- Child component (color-picker.blade.php) --}}
+<?php
+
+use Livewire\Attributes\Modelable;
+use Livewire\Component;
+
+new class extends Component {
+    #[Modelable]
+    public string $value = '';
+};
+?>
+
+<div>
+    <input type="color" wire:model.live="value">
+</div>
+```
+
+When the user picks a color in the child, the parent's `$color` property updates automatically. Use `#[Modelable]` when building reusable input components that need to integrate with `wire:model` on the parent side.
 
 ### Computed Properties
 
@@ -524,6 +566,59 @@ Livewire 4 automatically adds a `data-loading` attribute to elements that trigge
 ```
 
 Prefer the `data-loading` CSS approach for simple loading states. Use `wire:loading` only when you need conditional content swapping.
+
+### wire:dirty (Form State)
+
+Livewire automatically adds a `data-dirty` attribute to elements when bound form data has changed from its initial state. Use CSS classes to provide visual feedback:
+
+```blade
+{{-- Highlight input border when value has changed --}}
+<input type="text" wire:model="form.name" class="data-dirty:border-yellow-500">
+
+{{-- Show a "unsaved changes" notice when dirty --}}
+<div wire:dirty>You have unsaved changes.</div>
+
+{{-- Hide an element when dirty using the .remove modifier --}}
+<div wire:dirty.remove>All changes saved.</div>
+```
+
+Use `wire:dirty` to give users clear feedback that their form state has diverged from what was last saved or loaded.
+
+### wire:offline
+
+Show or hide elements when the user loses their internet connection:
+
+```blade
+{{-- Show a banner when the user goes offline --}}
+<div wire:offline>
+    You are currently offline. Changes will sync when your connection is restored.
+</div>
+
+{{-- Add a CSS class when offline --}}
+<div wire:offline.class="opacity-50 pointer-events-none">
+    <form wire:submit="save">
+        ...
+    </form>
+</div>
+```
+
+### wire:confirm
+
+Add a browser confirmation dialog before executing an action:
+
+```blade
+{{-- Basic confirmation dialog --}}
+<button wire:click="delete({{ $ticket->id }})" wire:confirm="Are you sure you want to delete this ticket?">
+    Delete
+</button>
+
+{{-- Typed confirmation for destructive actions --}}
+<button wire:click="destroy" wire:confirm.prompt="Type DELETE to confirm|DELETE">
+    Permanently Destroy
+</button>
+```
+
+Use `wire:confirm` for any destructive or irreversible action. The `.prompt` modifier requires the user to type a specific value before the action proceeds, adding an extra layer of protection.
 
 ### Data from Components
 - All data should come from component properties or the `render()` / `rendering()` method
