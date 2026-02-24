@@ -1,21 +1,90 @@
-# Webminty Livewire Guidelines (Reference)
+# Webminty Livewire 4 Guidelines (Reference)
 
 ## Table of Contents
-- [Component Structure](#component-structure)
+- [Component Formats](#component-formats)
 - [Attributes](#attributes)
+- [Islands](#islands)
+- [Slots](#slots)
 - [Form Objects](#form-objects)
 - [Navigation](#navigation)
+- [Blade Integration](#blade-integration)
 - [Naming Conventions](#naming-conventions)
 - [Directory Structure](#directory-structure)
-- [Blade Integration](#blade-integration)
 - [Testing](#testing)
 - [Architecture Tests](#architecture-tests)
 
 ---
 
-## Component Structure
+## Component Formats
 
-### Full-Page Component
+Livewire 4 supports three component formats. Prefer single-file for most components.
+
+### Single-File Component (Preferred)
+
+Single-file components combine PHP and Blade in one `.wire.php` file:
+
+```php
+{{-- resources/views/components/dashboard.wire.php --}}
+<?php
+
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Component;
+
+new #[Title('Dashboard')] #[Layout('components.layouts.app')]
+class extends Component {
+    //
+};
+?>
+
+<div>
+    <h1>{{ __('dashboard.title') }}</h1>
+</div>
+```
+
+### Single-File Component with Data
+
+```php
+{{-- resources/views/components/ticket-list.wire.php --}}
+<?php
+
+use App\Models\Ticket;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Attributes\Url;
+use Livewire\Component;
+use Livewire\WithPagination;
+
+new #[Title('Tickets')] #[Layout('components.layouts.app')]
+class extends Component {
+    use WithPagination;
+
+    #[Url]
+    public string $search = '';
+
+    #[Url]
+    public string $status = '';
+
+    public function rendering($view): void
+    {
+        $view->with('tickets', Ticket::query()
+            ->when($this->search, fn ($q, $search) => $q->search($search))
+            ->when($this->status, fn ($q, $status) => $q->where('status', $status))
+            ->latest()
+            ->paginate(15));
+    }
+};
+?>
+
+<div>
+    <input type="text" wire:model.live.debounce.300ms="search">
+    {{-- ticket list markup --}}
+</div>
+```
+
+### Class-Based Component (Alternative)
+
+Use when you need separate PHP and Blade files, or for complex components:
 
 ```php
 <?php
@@ -40,38 +109,34 @@ final class Dashboard extends Component
 }
 ```
 
-### Component with Data
+### Multi-File Component
 
-```php
-#[Title('Tickets')]
-#[Layout('components.layouts.app')]
-final class TicketList extends Component
-{
-    #[Url]
-    public string $search = '';
+Organizes PHP, Blade, JS, and tests in a dedicated directory:
 
-    #[Url]
-    public string $status = '';
+```
+resources/views/components/ticket-list/
+├── ticket-list.wire.php    # PHP + Blade
+├── ticket-list.js          # JavaScript (optional)
+└── ticket-list.test.php    # Tests (optional)
+```
 
-    public function render(): View
-    {
-        return view('livewire.ticket-list', [
-            'tickets' => Ticket::query()
-                ->when($this->search, fn ($q, $search) => $q->search($search))
-                ->when($this->status, fn ($q, $status) => $q->where('status', $status))
-                ->latest()
-                ->paginate(15),
-        ]);
-    }
-}
+Create with: `php artisan make:livewire ticket-list --mfc`
+
+### Converting Between Formats
+
+```bash
+php artisan livewire:convert ticket-list          # Auto-detect and convert
+php artisan livewire:convert ticket-list --sfc    # Convert to single-file
+php artisan livewire:convert ticket-list --mfc    # Convert to multi-file
 ```
 
 ### Key Rules
-- Components must be `final`
-- Use `#[Title]` and `#[Layout]` attributes on full-page components
-- Pass data to views via the `render()` method's second argument
+- Prefer single-file components for most cases
+- Class-based components must be `final`
+- Single-file components use `new class extends Component`
+- Use `#[Title]` and `#[Layout]` attributes on all full-page components
 - Keep components thin — delegate business logic to Actions
-- Use `declare(strict_types=1)` and explicit return types
+- Use `declare(strict_types=1)` in class-based components
 
 ---
 
@@ -81,11 +146,38 @@ final class TicketList extends Component
 |-----------|---------|---------|
 | `#[Title('...')]` | Set page title | `#[Title('Dashboard')]` |
 | `#[Layout('...')]` | Set layout component | `#[Layout('components.layouts.app')]` |
+| `#[Prop]` | Accept and forward attributes from parent | `#[Prop] public string $variant = 'primary'` |
 | `#[Url]` | Bind property to query string | `#[Url] public string $search = ''` |
 | `#[Locked]` | Prevent client modification | `#[Locked] public int $userId` |
 | `#[On('event-name')]` | Listen for events | `#[On('ticket-created')] public function refresh()` |
 | `#[Computed]` | Cache derived data for request lifecycle | `#[Computed] public function total(): int` |
 | `#[Validate('...')]` | Inline validation rule | `#[Validate('required\|string')]` |
+
+### #[Prop] Attribute (New in v4)
+
+Forward attributes from parent components, similar to Blade component attributes:
+
+```php
+<?php
+
+use Livewire\Attributes\Prop;
+use Livewire\Component;
+
+new class extends Component {
+    #[Prop]
+    public string $variant = 'primary';
+
+    #[Prop]
+    public string $size = 'md';
+};
+?>
+
+<button {{ $attributes->class(["btn-{$this->variant}", "btn-{$this->size}"]) }}>
+    {{ $slot }}
+</button>
+```
+
+Note: Props are captured on initial render and memoized. Later changes from the parent won't propagate.
 
 ### Computed Properties
 
@@ -111,6 +203,102 @@ public function refreshList(): void
 // Dispatching events
 $this->dispatch('ticket-created');
 $this->dispatch('ticket-created')->to(TicketList::class);
+```
+
+### PHP 8.4 Property Hooks
+
+Use native property hooks as an alternative to `updating` lifecycle hooks:
+
+```php
+public int $quantity {
+    set => max(1, $value);
+}
+
+public string $email {
+    set => strtolower(trim($value));
+}
+```
+
+---
+
+## Islands
+
+Islands are isolated regions within a component that re-render independently. Use them to prevent expensive parts of a view from blocking the rest of the page.
+
+### Basic Usage
+
+```blade
+<div>
+    <h1>Dashboard</h1>
+
+    {{-- This section re-renders independently --}}
+    @island
+        <livewire:activity-feed />
+    @endisland
+
+    {{-- This section is not affected by activity-feed updates --}}
+    <div>
+        <p>Static content that won't re-render</p>
+    </div>
+</div>
+```
+
+### When to Use Islands
+- Expensive queries or computations that shouldn't block the page
+- Independently updating sections (e.g., activity feeds, notification counts)
+- Components with frequent updates that shouldn't cause full-page re-renders
+
+### When NOT to Use Islands
+- Simple components with minimal render cost
+- Components that need to share state with the parent
+
+---
+
+## Slots
+
+Livewire 4 components accept slots like Blade components.
+
+### Default Slot
+
+```blade
+{{-- Using the component --}}
+<wire:modal>
+    <p>This content goes in the default slot.</p>
+</wire:modal>
+```
+
+```blade
+{{-- Inside the modal component --}}
+<div class="modal">
+    {{ $slot }}
+</div>
+```
+
+### Named Slots
+
+```blade
+{{-- Using the component --}}
+<wire:modal>
+    <wire:slot name="header">
+        <h2>Confirm Delete</h2>
+    </wire:slot>
+
+    <p>Are you sure you want to delete this item?</p>
+
+    <wire:slot name="footer">
+        <button wire:click="cancel">Cancel</button>
+        <button wire:click="confirm">Confirm</button>
+    </wire:slot>
+</wire:modal>
+```
+
+```blade
+{{-- Inside the modal component --}}
+<div class="modal">
+    <div class="modal-header">{{ $header }}</div>
+    <div class="modal-body">{{ $slot }}</div>
+    <div class="modal-footer">{{ $footer }}</div>
+</div>
 ```
 
 ---
@@ -170,13 +358,19 @@ final class TicketForm extends Form
 }
 ```
 
-### Using Forms in Components
+### Using Forms in Single-File Components
 
 ```php
-#[Title('Create Ticket')]
-#[Layout('components.layouts.app')]
-final class CreateTicketPage extends Component
-{
+<?php
+
+use App\Livewire\Forms\TicketForm;
+use App\Actions\Tickets\CreateTicket;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use Livewire\Component;
+
+new #[Title('Create Ticket')] #[Layout('components.layouts.app')]
+class extends Component {
     public TicketForm $form;
 
     public function save(CreateTicket $createTicket): void
@@ -188,12 +382,16 @@ final class CreateTicketPage extends Component
             navigate: true,
         );
     }
+};
+?>
 
-    public function render(): View
-    {
-        return view('livewire.create-ticket');
-    }
-}
+<div>
+    <form wire:submit="save">
+        <input type="text" wire:model="form.title">
+        <textarea wire:model="form.body"></textarea>
+        <button type="submit">Create</button>
+    </form>
+</div>
 ```
 
 ### Key Rules
@@ -235,40 +433,6 @@ $this->redirect(route('tickets.index'), navigate: true);
 
 ---
 
-## Naming Conventions
-
-| What | Convention | Example |
-|------|-----------|---------|
-| Components | PascalCase, descriptive | `Dashboard`, `TicketList` |
-| Form objects | PascalCase, suffixed with `Form` | `LoginForm`, `TicketForm` |
-| Component views | kebab-case in `livewire/` | `livewire/ticket-list.blade.php` |
-| Events | kebab-case | `ticket-created`, `order-updated` |
-
----
-
-## Directory Structure
-
-```
-app/Livewire/
-├── Auth/
-│   ├── Login.php
-│   └── Register.php
-├── Forms/
-│   ├── LoginForm.php
-│   └── TicketForm.php
-├── Dashboard.php
-└── TicketList.php
-
-resources/views/livewire/
-├── auth/
-│   ├── login.blade.php
-│   └── register.blade.php
-├── dashboard.blade.php
-└── ticket-list.blade.php
-```
-
----
-
 ## Blade Integration
 
 ### Wire Directives
@@ -293,18 +457,137 @@ resources/views/livewire/
 
 {{-- Confirmation --}}
 <button wire:click="delete({{ $ticket->id }})" wire:confirm="Are you sure?">Delete</button>
+```
 
-{{-- Loading states --}}
+### wire:ref (New in v4)
+
+Reference child components from a parent:
+
+```blade
+<div>
+    <livewire:modal wire:ref="modal">
+        <p>Modal content</p>
+    </livewire:modal>
+
+    <button wire:click="openModal">Open</button>
+</div>
+```
+
+Access the child via `$this->$refs->modal->someMethod()` in PHP or `$refs.modal.$wire` in JavaScript.
+
+### wire:transition (New in v4)
+
+Add enter/leave animations using the native View Transitions API:
+
+```blade
+{{-- Basic fade transition --}}
+<div wire:transition>
+    Content that fades in/out
+</div>
+```
+
+Note: Livewire 4 uses the browser's View Transitions API. The v3 modifiers (`.opacity`, `.scale`, `.duration`) are no longer supported.
+
+### Loading States (data-loading)
+
+Livewire 4 automatically adds a `data-loading` attribute to elements that trigger network requests. Use CSS classes instead of verbose `wire:loading` patterns:
+
+```blade
+{{-- Preferred v4 approach — use data-loading CSS --}}
+<button wire:click="save" class="data-loading:opacity-50 data-loading:pointer-events-none">
+    Save Changes
+</button>
+
+{{-- Still works but more verbose --}}
 <button wire:click="save" wire:loading.attr="disabled">
     <span wire:loading.remove>Save</span>
     <span wire:loading>Saving...</span>
 </button>
 ```
 
+Prefer the `data-loading` CSS approach for simple loading states. Use `wire:loading` only when you need conditional content swapping.
+
 ### Data from Components
-- All data should come from component properties or the `render()` method
+- All data should come from component properties or the `render()` / `rendering()` method
 - No Eloquent queries in Blade views
 - Use `$this->propertyName` for computed properties
+
+---
+
+## Naming Conventions
+
+| What | Convention | Example |
+|------|-----------|---------|
+| Single-file components | kebab-case with `.wire.php` suffix | `ticket-list.wire.php` |
+| Class-based components | PascalCase | `TicketList.php` |
+| Form objects | PascalCase, suffixed with `Form` | `LoginForm`, `TicketForm` |
+| Component views (class-based) | kebab-case in `livewire/` | `livewire/ticket-list.blade.php` |
+| Events | kebab-case | `ticket-created`, `order-updated` |
+
+---
+
+## Directory Structure
+
+### Single-File Components (Default in v4)
+
+```
+resources/views/components/
+├── layouts/
+│   └── app.blade.php
+├── dashboard.wire.php
+├── ticket-list.wire.php
+├── auth/
+│   ├── login.wire.php
+│   └── register.wire.php
+└── tickets/
+    ├── create.wire.php
+    └── show.wire.php
+
+app/Livewire/
+└── Forms/
+    ├── LoginForm.php
+    └── TicketForm.php
+```
+
+### Class-Based Components (Alternative)
+
+```
+app/Livewire/
+├── Auth/
+│   ├── Login.php
+│   └── Register.php
+├── Forms/
+│   ├── LoginForm.php
+│   └── TicketForm.php
+├── Dashboard.php
+└── TicketList.php
+
+resources/views/livewire/
+├── auth/
+│   ├── login.blade.php
+│   └── register.blade.php
+├── dashboard.blade.php
+└── ticket-list.blade.php
+```
+
+### Emoji Prefix
+
+Livewire 4 defaults to prefixing generated component filenames with a `⚡` emoji. **Do not use this.** Disable it in your Livewire config:
+
+```php
+// config/livewire.php
+'make_command' => [
+    'emoji' => false,
+],
+```
+
+### Artisan Commands
+
+```bash
+php artisan make:livewire dashboard              # Single-file (default)
+php artisan make:livewire dashboard --mfc         # Multi-file
+php artisan make:livewire dashboard --class        # Class-based (v3 style)
+```
 
 ---
 
@@ -373,6 +656,7 @@ test('dispatches event after creation', function (): void {
 ## Architecture Tests
 
 ```php
+// For class-based components
 arch()
     ->expect('App\Livewire')
     ->toExtend('Livewire\Component')
