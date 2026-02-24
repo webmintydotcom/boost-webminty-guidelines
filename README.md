@@ -28,7 +28,7 @@ This package registers the **webminty-laravel-standards** skill with Laravel Boo
 - Typed properties, parameters, and return types (including `void`)
 - Constructor property promotion
 - Strict comparison (`===` / `!==`)
-- PSR-1, PSR-2, and PSR-12 compliance
+- PSR-12 compliance (includes PSR-1)
 
 ### Laravel
 
