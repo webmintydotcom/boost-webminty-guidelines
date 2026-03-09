@@ -1131,6 +1131,11 @@ final class InsufficientFundsException extends Exception
 ### Framework
 All projects use **Pest PHP**.
 
+### Run Tests
+
+- Always run tests with the `--parallel` flag: `php artisan test --compact --parallel`
+- When filtering tests, also use parallel: `php artisan test --compact --parallel --filter=testName`
+
 ### Pest Configuration
 
 ```php
