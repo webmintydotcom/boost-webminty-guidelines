@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [3.0.0] - 2026-04-15
+
+### Updated
+
+- Laravel 13 support
+
+## [2.0.1] - 2026-03-09
+
+### Added
+
+- Run Pest tests in parallel by default with `--parallel` flag
+
 ## [2.0.0] - 2026-02-24
 
 ### Added

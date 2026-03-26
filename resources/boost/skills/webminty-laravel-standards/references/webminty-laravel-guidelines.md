@@ -285,6 +285,36 @@ final class Ticket extends Model
 }
 ```
 
+### Model Attributes (Laravel 13+)
+
+Laravel 13 introduces declarative attributes for model configuration. Use these instead of properties when available:
+
+```php
+use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\Connection;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
+
+#[Table('custom_tickets')]
+#[Connection('mysql')]
+#[UsePolicy(TicketPolicy::class)]
+final class Ticket extends Model
+{
+    // ...
+}
+```
+
+| Attribute | Purpose | Replaces |
+|-----------|---------|----------|
+| `#[Table('name')]` | Set table name | `protected $table` |
+| `#[Connection('name')]` | Set database connection | `protected $connection` |
+| `#[UsePolicy(Policy::class)]` | Associate policy | Manual policy mapping |
+| `#[WithoutTimestamps]` | Disable timestamps | `public $timestamps = false` |
+| `#[WithoutIncrementing]` | Disable auto-increment | `public $incrementing = false` |
+| `#[DateFormat('U')]` | Custom date format | `protected $dateFormat` |
+
+On Laravel 12, continue using the property-based approach.
+
 ### Key Rules
 - Use `$guarded = ['id']` instead of `$fillable`
 - Use the `casts()` method (not `$casts` property)
@@ -292,6 +322,8 @@ final class Ticket extends Model
 - Always type relationship return values (`BelongsTo`, `HasMany`, etc.)
 - Use one trait per line
 - Singular names for belongsTo/hasOne, plural for hasMany/belongsToMany
+- On Laravel 13+, prefer model attributes (`#[Table]`, `#[UsePolicy]`, etc.) over property configuration
+- Do not instantiate models inside `boot()` or `booted()` — Laravel 13 throws a `LogicException` if you do
 
 ### Common Cast Types
 - `boolean` for `is_*` and `has_*` columns
@@ -302,15 +334,13 @@ final class Ticket extends Model
 - `Data::class` for Spatie LaravelData columns
 
 ### HasHashIds Trait
-Generate URL-safe public IDs:
+Generate URL-safe public IDs. Uses the `booted()` method to register the observer — this avoids the Laravel 13 restriction against instantiating models inside `boot()`:
 
 ```php
 trait HasHashIds
 {
-    protected static function boot(): void
+    protected static function booted(): void
     {
-        parent::boot();
-
         static::created(function ($model): void {
             $reflect = new ReflectionClass(self::class);
             $connection = Str::lower($reflect->getShortName());
@@ -358,6 +388,10 @@ public function boot(): void
     }
 }
 ```
+
+### Model boot() Restriction (Laravel 13+)
+
+Laravel 13 throws a `LogicException` if you instantiate a model inside `boot()` or `booted()`. Move any model-creating logic to observers or event listeners. Use `booted()` (not `boot()`) for registering model event callbacks — this is compatible with both Laravel 12 and 13.
 
 ---
 
@@ -637,6 +671,34 @@ final class StoreController extends Controller
 }
 ```
 
+### Controller Attributes (Laravel 13+)
+
+Laravel 13 introduces declarative attributes for middleware and authorization on controllers:
+
+```php
+use Illuminate\Routing\Attributes\Controllers\Authorize;
+use Illuminate\Routing\Attributes\Controllers\Middleware;
+
+#[Middleware('auth', 'verified')]
+final class ShowController extends Controller
+{
+    #[Authorize('view', [Ticket::class, 'ticket'])]
+    public function __invoke(Ticket $ticket): Response
+    {
+        return Inertia::render('Tickets/Show', [
+            'ticket' => TicketResource::make($ticket),
+        ]);
+    }
+}
+```
+
+| Attribute | Purpose | Replaces |
+|-----------|---------|----------|
+| `#[Middleware('auth')]` | Apply middleware to controller or method | `$this->middleware()` / route middleware |
+| `#[Authorize('ability', [Model::class])]` | Policy authorization on method | `$this->authorize()` |
+
+On Laravel 12, continue using route-based middleware and manual `$this->authorize()` calls.
+
 ### Parameter Order
 1. Route model bindings
 2. Form Request
@@ -824,6 +886,44 @@ final class ProcessOrder implements ShouldQueue
 }
 ```
 
+### Job Attributes (Laravel 13+)
+
+Laravel 13 introduces declarative attributes for job configuration:
+
+```php
+use Illuminate\Queue\Attributes\Tries;
+use Illuminate\Queue\Attributes\Backoff;
+use Illuminate\Queue\Attributes\Timeout;
+use Illuminate\Queue\Attributes\Connection;
+use Illuminate\Queue\Attributes\Queue;
+use Illuminate\Queue\Attributes\WithoutRelations;
+
+#[Tries(3)]
+#[Backoff(60)]
+#[Timeout(120)]
+#[Connection('redis')]
+#[Queue('orders')]
+final class ProcessOrder implements ShouldQueue
+{
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    public function __construct(
+        #[WithoutRelations]
+        public Order $order,
+    ) {}
+
+    public function handle(PaymentService $payment): void
+    {
+        $payment->charge($this->order);
+    }
+}
+```
+
+On Laravel 12, continue using property-based configuration (`public int $tries = 3`, etc.).
+
 ### Key Rules
 - Jobs must be `final` and implement `ShouldQueue`
 - Use one trait per line
@@ -832,6 +932,7 @@ final class ProcessOrder implements ShouldQueue
 - Keep jobs small and focused
 - Always handle failures with `failed()` method
 - Use middleware for rate limiting and preventing overlaps
+- On Laravel 13+, prefer job attributes (`#[Tries]`, `#[Timeout]`, etc.) over property configuration
 
 ### Dispatching
 
@@ -1038,6 +1139,10 @@ app/
 
 ## General Laravel
 
+### CSRF Protection (Laravel 13+)
+
+Laravel 13 renames `VerifyCsrfToken` to `PreventRequestForgery` and adds dual-layer protection (origin verification via `Sec-Fetch-Site` header + traditional CSRF token fallback). If you reference this middleware directly, use the name appropriate for your Laravel version. The old name remains as a deprecated alias in Laravel 13 but should be updated.
+
 ### Dependency Injection
 - Prefer constructor/method injection
 - Use `app()` only when DI isn't possible
@@ -1129,7 +1234,7 @@ final class InsufficientFundsException extends Exception
 ## Testing
 
 ### Framework
-All projects use **Pest PHP**.
+All projects use **Pest PHP**. Laravel 12 uses Pest 3 / PHPUnit 11. Laravel 13 requires Pest 4 / PHPUnit 12.
 
 ### Run Tests
 
@@ -1297,3 +1402,9 @@ final class TicketFactory extends Factory
 - Use string interpolation over concatenation
 - No `dd()`, `dump()`, `ray()`, `var_dump()` in committed code
 - Run `composer quality` (Pint + PHPStan + Pest) before committing
+
+### Laravel 13+ Additions
+- Prefer declarative attributes for model config (`#[Table]`, `#[UsePolicy]`), controller middleware (`#[Middleware]`, `#[Authorize]`), and job config (`#[Tries]`, `#[Timeout]`)
+- `VerifyCsrfToken` renamed to `PreventRequestForgery`
+- Do not instantiate models inside `boot()` or `booted()` — use `booted()` for event callbacks only
+- Requires Pest 4 / PHPUnit 12

@@ -154,6 +154,8 @@ php artisan livewire:convert ticket-list --mfc    # Convert to multi-file
 | `#[Computed]` | Cache derived data for request lifecycle | `#[Computed] public function total(): int` |
 | `#[Validate('...')]` | Inline validation rule | `#[Validate('required\|string')]` |
 | `#[Modelable]` | Enable wire:model binding on child component property | `#[Modelable] public string $value = ''` |
+| `#[Defer]` | Defer loading until after initial page render | `#[Defer] public function loadData()` |
+| `#[Async]` | Non-blocking action execution | `#[Async] public function generate()` |
 
 ### #[Reactive] Attribute
 
@@ -278,6 +280,60 @@ public string $email {
     set => strtolower(trim($value));
 }
 ```
+
+### #[Defer] Attribute
+
+Defer loading of a component until after the initial page render:
+
+```php
+<?php
+
+use Livewire\Attributes\Defer;
+use Livewire\Component;
+
+new class extends Component {
+    #[Defer]
+    public function loadExpensiveData(): array
+    {
+        return ExpensiveQuery::run();
+    }
+};
+?>
+
+<div>
+    <div wire:loading>Loading...</div>
+    <div>{{ $this->loadExpensiveData() }}</div>
+</div>
+```
+
+Use `#[Defer]` for data that is not critical for the initial page render. For bundling multiple deferred loads into a single request, use `lazy.bundle` or `defer.bundle`.
+
+### #[Async] Attribute
+
+Mark an action as non-blocking so the UI remains interactive while the server processes the request:
+
+```php
+<?php
+
+use Livewire\Attributes\Async;
+use Livewire\Component;
+
+new class extends Component {
+    #[Async]
+    public function generateReport(): void
+    {
+        // Long-running operation — UI is not blocked
+        app(GenerateReport::class)->execute();
+    }
+};
+?>
+
+<div>
+    <button wire:click="generateReport">Generate</button>
+</div>
+```
+
+You can also use the `.async` modifier directly in Blade: `wire:click.async="generateReport"`.
 
 ---
 
@@ -465,6 +521,20 @@ class extends Component {
 
 ## Navigation
 
+### Route::livewire() (Laravel 13+)
+
+Laravel 13 introduces a dedicated route method for Livewire full-page components:
+
+```php
+use App\Livewire\Dashboard;
+use App\Livewire\Tickets\TicketList;
+
+Route::livewire('/dashboard', Dashboard::class)->name('dashboard');
+Route::livewire('/tickets', TicketList::class)->name('tickets.index');
+```
+
+This replaces the `Route::get()` pattern for Livewire page components. On Laravel 12, continue using `Route::get()` with the component class as the action.
+
 ### SPA-Style Redirects
 
 ```php
@@ -619,6 +689,45 @@ Add a browser confirmation dialog before executing an action:
 ```
 
 Use `wire:confirm` for any destructive or irreversible action. The `.prompt` modifier requires the user to type a specific value before the action proceeds, adding an extra layer of protection.
+
+### wire:sort (Drag-and-Drop Sorting)
+
+Enable drag-and-drop reordering on lists:
+
+```blade
+<ul wire:sort="updateOrder">
+    @foreach($items as $item)
+        <li wire:sort.item="{{ $item->id }}">
+            <span wire:sort.handle>⠿</span>
+            {{ $item->title }}
+        </li>
+    @endforeach
+</ul>
+```
+
+```php
+public function updateOrder(array $items): void
+{
+    foreach ($items as $item) {
+        Item::where('id', $item['value'])->update(['position' => $item['order']]);
+    }
+}
+```
+
+### wire:intersect (Viewport Detection)
+
+Trigger actions when an element enters the viewport — useful for infinite scroll and lazy loading:
+
+```blade
+<div wire:intersect="loadMore">
+    {{-- Triggers loadMore() when this element scrolls into view --}}
+</div>
+
+{{-- Only trigger once --}}
+<div wire:intersect.once="trackImpression">
+    {{-- Fires trackImpression() the first time this element is visible --}}
+</div>
+```
 
 ### Data from Components
 - All data should come from component properties or the `render()` / `rendering()` method

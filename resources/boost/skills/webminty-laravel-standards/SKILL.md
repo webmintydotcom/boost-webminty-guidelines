@@ -68,6 +68,7 @@ Don't:
 - Skip `declare(strict_types=1)`.
 - Skip `final` on classes.
 - Use `dd()`, `dump()`, `ray()`, `var_dump()`, or `print_r` in committed code.
+- Instantiate models inside `boot()` or `booted()` — Laravel 13 throws a `LogicException`.
 
 ## Examples
 ```php

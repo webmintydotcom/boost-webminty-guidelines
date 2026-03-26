@@ -18,7 +18,7 @@ Apply Webminty's Livewire 4 guidelines for projects using Livewire as the fronte
 - Activate this skill when writing tests that use `Livewire::test()`.
 
 ## Scope
-- In scope: Livewire single-file and class-based components, form objects, islands, slots, `#[Reactive]` attribute, `#[Modelable]` attribute, Livewire attributes (`#[Title]`, `#[Layout]`, `#[Validate]`, `#[Computed]`, `#[Url]`, `#[Locked]`, `#[On]`), `wire:` directives (`wire:model`, `wire:click`, `wire:navigate`, `wire:ref`, `wire:transition`, `wire:confirm`, `wire:dirty`, `wire:offline`), `data-loading` states, Livewire navigation, Livewire testing.
+- In scope: Livewire single-file and class-based components, form objects, islands, slots, `#[Reactive]` attribute, `#[Modelable]` attribute, `#[Defer]` attribute, `#[Async]` attribute, Livewire attributes (`#[Title]`, `#[Layout]`, `#[Validate]`, `#[Computed]`, `#[Url]`, `#[Locked]`, `#[On]`), `wire:` directives (`wire:model`, `wire:click`, `wire:navigate`, `wire:ref`, `wire:transition`, `wire:confirm`, `wire:dirty`, `wire:offline`, `wire:sort`, `wire:intersect`), `data-loading` states, Livewire navigation, `Route::livewire()` (Laravel 13+), Livewire testing.
 - Out of scope: Core PHP/Laravel standards (see `webminty-laravel-standards`), non-Livewire frontend stacks.
 
 ## Workflow
@@ -56,6 +56,9 @@ Do:
 - Use islands to isolate independently re-rendering regions.
 - Use `data-loading:opacity-50` for loading states via CSS.
 - Use `wire:ref` to interact with child components from a parent.
+- Use `Route::livewire()` for Livewire page routes (Laravel 13+).
+- Use `#[Defer]` for deferred component loading and `#[Async]` for non-blocking actions.
+- Use `wire:sort` for drag-and-drop sorting.
 - Keep components thin — delegate to Actions.
 
 Don't:
