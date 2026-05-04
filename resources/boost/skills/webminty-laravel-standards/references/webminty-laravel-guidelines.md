@@ -818,7 +818,15 @@ Always use `__()` translation helper:
 ```
 
 ### CSS
-Use Tailwind utility classes. Extract repeated patterns to components.
+Use Tailwind v4 (CSS-first config via `@import "tailwindcss"` and `@theme`; no `tailwind.config.js`).
+
+**Default to built-in Tailwind utilities and theme variables.** Do not invent custom classes, custom CSS variables, or `@theme` extensions unless an existing utility/variable genuinely cannot express the design.
+
+- Prefer `bg-blue-500`, `text-zinc-900`, `p-4`, `rounded-lg` over custom classes.
+- Prefer the default theme scale (spacing, color, radius, font-size) over custom values.
+- Use arbitrary values (`w-[37px]`) only for true one-offs; never as a substitute for the scale.
+- Only add to `@theme` when introducing a brand token (e.g. `--color-brand-*`) that will be reused.
+- Extract repeated utility patterns to Blade components, not to custom CSS classes.
 
 ### JavaScript
 Use Alpine.js for simple interactivity. Prefer external files for larger scripts.
