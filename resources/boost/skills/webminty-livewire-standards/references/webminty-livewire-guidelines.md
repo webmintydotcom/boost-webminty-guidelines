@@ -378,9 +378,9 @@ Livewire 4 components accept slots like Blade components.
 
 ```blade
 {{-- Using the component --}}
-<wire:modal>
+<livewire:modal>
     <p>This content goes in the default slot.</p>
-</wire:modal>
+</livewire:modal>
 ```
 
 ```blade
@@ -394,28 +394,34 @@ Livewire 4 components accept slots like Blade components.
 
 ```blade
 {{-- Using the component --}}
-<wire:modal>
-    <wire:slot name="header">
+<livewire:modal>
+    <livewire:slot name="header">
         <h2>Confirm Delete</h2>
-    </wire:slot>
+    </livewire:slot>
 
     <p>Are you sure you want to delete this item?</p>
 
-    <wire:slot name="footer">
+    <livewire:slot name="footer">
         <button wire:click="cancel">Cancel</button>
         <button wire:click="confirm">Confirm</button>
-    </wire:slot>
-</wire:modal>
+    </livewire:slot>
+</livewire:modal>
 ```
 
 ```blade
 {{-- Inside the modal component --}}
 <div class="modal">
-    <div class="modal-header">{{ $header }}</div>
+    <div class="modal-header">{{ $slots['header'] }}</div>
     <div class="modal-body">{{ $slot }}</div>
-    <div class="modal-footer">{{ $footer }}</div>
+    <div class="modal-footer">{{ $slots['footer'] }}</div>
 </div>
 ```
+
+### Key Rules
+- Use `<livewire:component-name>` to render Livewire components — not `<wire:component-name>`.
+- Self-close component tags when no slots/content: `<livewire:component-name />` (required in v4).
+- Pass named slots via `<livewire:slot name="...">`.
+- Access the default slot in the child as `{{ $slot }}` and named slots as `{{ $slots['name'] }}`.
 
 ---
 
@@ -521,9 +527,9 @@ class extends Component {
 
 ## Navigation
 
-### Route::livewire() (Laravel 13+)
+### Route::livewire()
 
-Laravel 13 introduces a dedicated route method for Livewire full-page components:
+Livewire 4 provides a dedicated route macro for full-page components:
 
 ```php
 use App\Livewire\Dashboard;
@@ -533,7 +539,7 @@ Route::livewire('/dashboard', Dashboard::class)->name('dashboard');
 Route::livewire('/tickets', TicketList::class)->name('tickets.index');
 ```
 
-This replaces the `Route::get()` pattern for Livewire page components. On Laravel 12, continue using `Route::get()` with the component class as the action.
+Prefer `Route::livewire()` over the older `Route::get('/path', Component::class)` pattern for full-page Livewire components — it's clearer about intent and is the documented Livewire 4 idiom. Works on any Laravel version Livewire 4 supports (10+).
 
 ### SPA-Style Redirects
 

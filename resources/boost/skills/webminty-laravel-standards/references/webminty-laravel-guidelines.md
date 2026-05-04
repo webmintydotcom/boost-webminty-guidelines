@@ -1278,8 +1278,16 @@ arch()
 
 arch()
     ->expect('App\Models')
-    ->toExtend('Illuminate\Database\Eloquent\Model')
-    ->toHaveMethod('casts');
+    ->toExtend('Illuminate\Database\Eloquent\Model');
+
+// Models with casted columns must use the casts() method (not the $casts property).
+// Exclude pivots or simple lookup models that have nothing to cast.
+arch()
+    ->expect('App\Models')
+    ->toHaveMethod('casts')
+    ->ignoring([
+        // 'App\Models\Pivots\TeamUser',
+    ]);
 
 arch()
     ->expect('App\Actions')

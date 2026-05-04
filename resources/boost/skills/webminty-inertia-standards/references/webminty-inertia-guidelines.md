@@ -129,13 +129,13 @@ final class HandleInertiaRequests extends Middleware
 - Share auth user and flash messages globally
 - Use API Resources for shared data — never pass raw models
 - Keep shared data minimal — only include what every page needs
-- Use `Inertia::lazy()` for page-specific expensive data (see Partial Reloads)
+- Use `Inertia::optional()` for page-specific expensive data (see Partial Reloads)
 
 ---
 
 ## Partial Reloads
 
-### Lazy Props
+### Optional Props
 
 ```php
 final class ShowController extends Controller
@@ -146,7 +146,7 @@ final class ShowController extends Controller
             'ticket' => TicketResource::make($ticket),
 
             // Only loaded on explicit partial reload request
-            'comments' => Inertia::lazy(
+            'comments' => Inertia::optional(
                 fn () => CommentResource::collection($ticket->comments),
             ),
 
@@ -162,8 +162,10 @@ final class ShowController extends Controller
 }
 ```
 
+> Note: `Inertia::lazy()` was removed in Inertia Laravel v3. Use `Inertia::optional()` instead — it has identical behavior.
+
 ### When to Use
-- `Inertia::lazy()` — Data that is expensive to compute and not needed on initial page load (e.g., comments, activity logs, related items). The frontend must explicitly request it.
+- `Inertia::optional()` — Data that is expensive to compute and not needed on initial page load (e.g., comments, activity logs, related items). The frontend must explicitly request it.
 - `Inertia::always()` — Data that must always be fresh, even during partial reloads (e.g., permissions, notification counts).
 - Default (no wrapper) — Data that should load on every full page visit.
 
@@ -184,40 +186,44 @@ final class ShowController extends Controller
                 fn () => ActivityResource::collection($ticket->activities()->latest()->get()),
             ),
 
-            // Group related deferred props to batch them in one request
+            // Group related deferred props (second arg) to batch them in one request
             'notifications' => Inertia::defer(
                 fn () => NotificationResource::collection($request->user()->unreadNotifications),
-            )->group('sidebar'),
+                'sidebar',
+            ),
             'onlineUsers' => Inertia::defer(
                 fn () => UserResource::collection(User::online()->get()),
-            )->group('sidebar'),
+                'sidebar',
+            ),
         ]);
     }
 }
 ```
 
-Use `Inertia::defer()` for data that is needed on the page but not critical for the first paint (e.g., activity logs, notifications, secondary panels). Use `->group()` to batch related deferred props into a single follow-up request.
+Use `Inertia::defer()` for data that is needed on the page but not critical for the first paint (e.g., activity logs, notifications, secondary panels). Pass a group name as the second argument to batch related deferred props into a single follow-up request.
+
+> Note: In Inertia Laravel v2 grouping was done via a chained `->group('name')`. v3 removed the chain method — pass the group as the second positional argument to `defer()` instead.
 
 ### Prop Types Summary
 
 | Method | Behavior |
 |--------|----------|
 | Default (no wrapper) | Included on every full page visit |
-| `Inertia::lazy()` | Excluded on first visit, loaded only on explicit partial reload |
+| `Inertia::optional()` | Excluded on first visit, loaded only on explicit partial reload (replaces v2's `lazy()`) |
 | `Inertia::defer()` | Loaded in a separate request after the initial page load |
-| `Inertia::optional()` | Included on first visit, excluded on subsequent partial reloads unless explicitly requested |
 | `Inertia::always()` | Always included, even during partial reloads |
 | `Inertia::merge()` | Merges with existing prop data instead of replacing (useful for infinite scroll) |
+| `Inertia::once()` | Loaded once on first visit, then cached client-side and reused across navigations |
 
 ```php
-// Deferred — loaded after initial page render
-'notifications' => Inertia::defer(
-    fn () => NotificationResource::collection($user->notifications),
-),
-
-// Optional — included on first visit, excluded on partial reloads unless requested
+// Optional — only loaded on explicit partial reload (frontend opts in)
 'stats' => Inertia::optional(
     fn () => StatsResource::make($ticket),
+),
+
+// Deferred — loaded automatically in a follow-up request after initial render
+'notifications' => Inertia::defer(
+    fn () => NotificationResource::collection($user->notifications),
 ),
 
 // Merge — appends to existing data (infinite scroll / pagination)
@@ -226,6 +232,21 @@ Use `Inertia::defer()` for data that is needed on the page but not critical for 
         Ticket::query()->paginate(15),
     ),
 ),
+
+// Once — expensive lookup loaded only once and cached on the client
+'timezones' => Inertia::once(fn () => timezone_identifiers_list()),
+```
+
+For data that should be shared globally and only fetched once across all Inertia responses, use the `shareOnce()` method in `HandleInertiaRequests` (companion to `share()`):
+
+```php
+public function shareOnce(Request $request): array
+{
+    return [
+        'permissions' => fn () => PermissionService::forUser($request->user()),
+        'featureFlags' => fn () => FeatureFlag::all(),
+    ];
+}
 ```
 
 ---
