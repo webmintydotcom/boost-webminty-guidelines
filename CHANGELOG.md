@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [3.3.0] - 2026-05-12
+
+### Added
+- **Per-project file conventions** in `core.blade.php` mandating three documentation files at the root of every project that installs this package
+- **`features.md` convention** — canonical record of what the product does, with a `Status: In Development | Live` line, a user-facing features list, and a backend features list; updated at the end of any feature/PR that changes behavior, with explicit scope guardrails on what does and does not belong (no TODOs, tech-debt notes, refactor history, marketing copy, or secrets)
+- **`DECISIONS.md` convention** — append-only log of non-obvious technical and architectural decisions, with a fixed entry shape (Decision / Why / Alternatives considered) and a rule that prior entries are never edited or deleted (reversals add a new superseding entry)
+- **`CHANGELOG.md` convention** — reverse-chronological log of user-visible changes following Keep a Changelog grouping, with an `## Unreleased` section for pre-launch projects
+- Clarifying line distinguishing `features.md` (what the product does) from `README.md` (how to install, run, and develop the project) to prevent overlap
+- "Create if missing" guidance on all three files so the AI scaffolds them on first applicable change
+- **Per-Project File Conventions** section in the README summarising the three files, their purposes, and their update triggers
+
 ## [3.2.0] - 2026-05-11
 
 ### Added
