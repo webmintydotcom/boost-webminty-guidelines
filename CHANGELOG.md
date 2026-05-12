@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [3.2.0] - 2026-05-11
+
+### Added
+- **Tailwind CSS skill** (`webminty-tailwind-standards`) covering Tailwind v4 CSS-first setup, theme tokens, default scales, utility usage, class ordering with `prettier-plugin-tailwindcss`, state/data/aria variants, container queries, dark mode (`prefers-color-scheme` and class-based), component extraction patterns for Blade/Livewire/Inertia, `@utility` / `@variant` / `@apply` guidance, arbitrary values, plugins, anti-patterns, and v3-to-v4 migration notes
+- **Accessibility section** in the Tailwind reference covering `focus-visible:` rings, `outline-hidden` vs `outline-none`, `sr-only` + skip-to-content pattern, `motion-safe:` / `motion-reduce:` for `prefers-reduced-motion`, `forced-colors:` for Windows high-contrast, 44×44px touch targets, contrast guidance, and `aria-*:` variants for stateful UI
+- **Dynamic class name anti-pattern** documenting why `bg-${color}-500` silently breaks in production builds and prescribing full-class-string lookup maps (with `@source inline(...)` as a last-resort safelist)
+- **"Tailwind purple" anti-pattern** — explicit guidance against defaulting to `indigo-*` / `violet-*` / `purple-*` / `fuchsia-*` / `pink-*` as accent colours (they're an AI/template "tell"); recommends `--color-brand-*` first, with `blue-600` / `emerald-600` / `sky-600` as fallbacks
+- **Status/semantic colour defaults table** prescribing `emerald-600` (success), `amber-500` (warning), `rose-600` (danger), `sky-600` (info)
+- `webminty-tailwind-standards` entry in `core.blade.php` so it auto-activates alongside `webminty-laravel-standards`
+
+### Changed
+- Replaced inline CSS section in `webminty-laravel-standards` with a cross-reference to the new Tailwind skill (single source of truth)
+- Scope lines in `webminty-laravel-standards`, `webminty-livewire-standards`, and `webminty-inertia-standards` now cross-reference `webminty-tailwind-standards` for Tailwind CSS conventions
+- README updated to list four skills and added a Tailwind CSS section to the Standards Overview
+
 ## [3.0.0] - 2026-04-15
 
 ### Updated

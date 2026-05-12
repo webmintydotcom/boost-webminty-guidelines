@@ -18,7 +18,7 @@ Apply Webminty's Laravel and PHP guidelines to keep code style consistent and La
 
 ## Scope
 - In scope: `.php`, `.blade.php`, Laravel conventions (routes, controllers, config, validation, migrations, tests, actions, jobs, DTOs, enums, commands, API).
-- Out of scope: JS/TS, CSS, infrastructure, database schema design, non-Laravel frameworks, frontend-stack-specific patterns (see `webminty-livewire-standards` or `webminty-inertia-standards` skills).
+- Out of scope: JS/TS, infrastructure, database schema design, non-Laravel frameworks, Tailwind CSS (see `webminty-tailwind-standards`), frontend-stack-specific patterns (see `webminty-livewire-standards` or `webminty-inertia-standards` skills).
 
 ## Workflow
 1. Identify the artifact (action, controller, model, Blade, test, job, DTO, enum, route, migration, etc.).

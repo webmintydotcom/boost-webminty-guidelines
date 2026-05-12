@@ -20,7 +20,7 @@ Apply Webminty's Inertia guidelines for projects using Inertia.js as the fronten
 
 ## Scope
 - In scope: Inertia controllers, `Inertia::render()`, `HandleInertiaRequests` middleware, shared props, partial reloads and prop types (`Inertia::optional()`, `Inertia::defer()`, `Inertia::always()`, `Inertia::merge()`, `Inertia::once()`, `shareOnce()`), SSR configuration (Laravel side), Inertia redirects, Inertia testing with `assertInertia()`.
-- Out of scope: Core PHP/Laravel standards (see `webminty-laravel-standards`), frontend framework conventions (React, Vue, Svelte components, TypeScript, state management).
+- Out of scope: Core PHP/Laravel standards (see `webminty-laravel-standards`), Tailwind CSS conventions (see `webminty-tailwind-standards`), frontend framework conventions (React, Vue, Svelte components, TypeScript, state management).
 
 ## Workflow
 1. Identify the Inertia artifact (controller, middleware, shared data, route, test).

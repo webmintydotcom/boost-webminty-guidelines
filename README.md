@@ -17,11 +17,12 @@ The package auto-discovers via Laravel's package discovery — no additional set
 
 ## What It Does
 
-This package registers three skills with Laravel Boost:
+This package registers four skills with Laravel Boost:
 
 | Skill | Activates When |
 |---|---|
 | **webminty-laravel-standards** | Writing, editing, or reviewing any Laravel/PHP code |
+| **webminty-tailwind-standards** | Writing or editing Tailwind CSS in Blade, Livewire, Inertia, or the CSS entry file |
 | **webminty-livewire-standards** | Working on Livewire components, form objects, or `wire:` directives |
 | **webminty-inertia-standards** | Working on controllers returning Inertia responses, shared data, or Inertia testing |
 
@@ -48,6 +49,17 @@ Skills activate automatically based on context, ensuring consistent adherence to
 - **Migrations** — Anonymous classes, `hash_id` pattern, boolean columns prefixed with `is_`/`has_`
 - **Testing** — Pest PHP with `test()` syntax, architecture tests to enforce standards
 - **Jobs** — `final`, `ShouldQueue`, dependencies injected in `handle()`
+
+### Tailwind CSS
+
+- **Tailwind v4** with CSS-first config — `@import "tailwindcss"` and `@theme` in a single CSS entry file; no `tailwind.config.js`
+- Default to built-in utilities and the default scale (spacing, colour, radius, font-size, breakpoint)
+- Brand tokens only via `@theme` (`--color-brand-*`, `--font-display`)
+- Extract repeated utility patterns to **components** (Blade / Livewire / Inertia), not custom CSS via `@apply`
+- Class ordering enforced by `prettier-plugin-tailwindcss`
+- Container queries (`@container`, `@sm:`, `@md:`) for component-level responsiveness
+- `data-*:` and `aria-*:` variants for stateful UI over JS class toggling
+- `focus-visible:` (not `focus:`) for focus rings
 
 ### Naming Conventions
 

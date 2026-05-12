@@ -19,7 +19,7 @@ Apply Webminty's Livewire 4 guidelines for projects using Livewire as the fronte
 
 ## Scope
 - In scope: Livewire single-file and class-based components, form objects, islands, slots, `#[Reactive]` attribute, `#[Modelable]` attribute, `#[Defer]` attribute, `#[Async]` attribute, Livewire attributes (`#[Title]`, `#[Layout]`, `#[Validate]`, `#[Computed]`, `#[Url]`, `#[Locked]`, `#[On]`), `wire:` directives (`wire:model`, `wire:click`, `wire:navigate`, `wire:ref`, `wire:transition`, `wire:confirm`, `wire:dirty`, `wire:offline`, `wire:sort`, `wire:intersect`), `data-loading` states, Livewire navigation, `Route::livewire()`, Livewire testing.
-- Out of scope: Core PHP/Laravel standards (see `webminty-laravel-standards`), non-Livewire frontend stacks.
+- Out of scope: Core PHP/Laravel standards (see `webminty-laravel-standards`), Tailwind CSS conventions (see `webminty-tailwind-standards`), non-Livewire frontend stacks.
 
 ## Workflow
 1. Identify the Livewire artifact (single-file component, class-based component, form object, island, Blade view with `wire:` directives).
