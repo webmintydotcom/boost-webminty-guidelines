@@ -26,7 +26,7 @@ Apply Webminty's Laravel and PHP guidelines to keep code style consistent and La
 3. Apply the core Laravel principle first, then PHP standards, then section-specific rules.
 4. If a rule conflicts with existing project conventions, follow Laravel conventions and keep changes consistent.
 
-## Core Rules (Summary)
+## Core Rules
 - Follow Laravel conventions first.
 - Follow PSR-12 (includes PSR-1).
 - Every PHP file must have `declare(strict_types=1)`.
@@ -37,38 +37,21 @@ Apply Webminty's Laravel and PHP guidelines to keep code style consistent and La
 - Always use curly braces for control structures.
 - Use string interpolation over concatenation.
 - Use strict comparison (`===`/`!==`).
+- Use kebab-case URLs, dot-notation route names, and snake_case database columns.
 - Use `$guarded = ['id']` instead of `$fillable`.
 - Use the `casts()` method instead of the `$casts` property.
-- Use the `#[Scope]` attribute for query scopes (Laravel 11+).
-- Actions are `final` classes with a single `execute()` method.
+- Use the `#[Scope]` attribute for query scopes (Laravel 11+), not `scopeX()` methods.
+- Use anonymous migrations (`return new class`), the `hash_id` pattern for public-facing IDs, and `is_`/`has_` prefixes for boolean columns.
+- Use Form Requests for controller validation, with array notation for rules (not pipe syntax).
+- Controllers stay thin: delegate business logic to Actions (`final` classes with a single `execute()` method).
 - DTOs extend `Spatie\LaravelData\Data` and are `final`.
 - Use backed enums (`enum Status: int`) with PascalCase cases; cast enum columns in the model's `casts()` method.
-- Use Pest PHP for all tests with `test()` function syntax.
-- Use array notation for validation rules (not pipe syntax).
-
-## Do and Don't
-Do:
-- Use kebab-case URLs, dot-notation route names, and snake_case database columns.
-- Use array notation for validation rules.
 - Use `config()` and avoid `env()` outside config files.
-- Use anonymous migrations (return new class).
-- Use `hash_id` pattern for public-facing IDs.
-- Prefix boolean columns with `is_` or `has_`.
-- Use Form Requests for controller validation.
-- Delegate business logic to Actions from controllers.
-- Use architecture tests to enforce coding standards.
+- Use Pest PHP for all tests with `test()` function syntax, and architecture tests to enforce coding standards.
 
-Don't:
-- Use `$fillable` — use `$guarded = ['id']` instead.
-- Use the `$casts` property — use the `casts()` method instead.
-- Use `scopeX()` methods — use the `#[Scope]` attribute instead.
-- Put business logic in controllers.
-- Use `env()` outside config files.
-- Use pipe syntax for validation rules.
-- Skip `declare(strict_types=1)`.
-- Skip `final` on classes.
-- Use `dd()`, `dump()`, `ray()`, `var_dump()`, or `print_r` in committed code.
-- Instantiate models inside `boot()` or `booted()` — Laravel 13 throws a `LogicException`.
+## Avoid
+- `dd()`, `dump()`, `ray()`, `var_dump()`, or `print_r` in committed code.
+- Instantiating models inside `boot()` or `booted()` — Laravel 13 throws a `LogicException`.
 
 ## Examples
 ```php

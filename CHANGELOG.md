@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Changed
 - `core.blade.php` trimmed to short activation pointers (~1KB, down from ~6KB) so less context is loaded on every session
+- Merged the overlapping "Core Rules" and "Do and Don't" sections in each `SKILL.md` into one deduplicated "Core Rules" list plus a short "Avoid" list
+- Replaced the README's duplicated standards summary with a table pointing at each skill
 - Split each skill's single large reference file into topic files under `references/`; each `SKILL.md` now indexes them so only the relevant files are read
 
 ## [3.3.0] - 2026-05-12

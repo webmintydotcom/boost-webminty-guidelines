@@ -27,28 +27,14 @@ Apply Webminty's Inertia guidelines for projects using Inertia.js as the fronten
 2. Read only the reference file(s) listed under References that match the task.
 3. Apply `webminty-laravel-standards` first (PHP conventions, `final`, strict types), then Inertia-specific rules.
 
-## Core Rules (Summary)
-- Controllers return `Inertia::render('PageName', [...props])`.
-- Page component names use PascalCase path notation: `Tickets/Show`.
-- Share common data via `HandleInertiaRequests::share()`.
-- Use `Inertia::optional()`, `Inertia::defer()`, `Inertia::always()`, `Inertia::merge()`, and `Inertia::once()` for controlling when props are loaded. (`Inertia::lazy()` was removed in v3 — use `Inertia::optional()` instead.)
-- Redirects use standard Laravel `redirect()->route()` — Inertia handles them automatically.
+## Core Rules
+- Controllers return `Inertia::render('PageName', [...props])`, never JSON. Keep API-only endpoints in separate API controllers.
+- Page component names use PascalCase path notation: `Tickets/Show`, `Auth/Login`.
+- Share common data (auth user, flash messages) via `HandleInertiaRequests::share()`. Don't share large datasets globally — use `Inertia::optional()` or page-specific props.
+- Use `Inertia::optional()`, `Inertia::defer()`, `Inertia::always()`, `Inertia::merge()`, and `Inertia::once()` for controlling when props are loaded; use `Inertia::optional()` for expensive data that isn't always needed (frontend opts in via partial reload). (`Inertia::lazy()` was removed in v3.)
+- Redirects use standard Laravel `redirect()->route()` / `redirect()->back()` after successful form submissions — Inertia handles them automatically.
 - Use Form Requests for validation — Inertia handles 422 responses automatically.
 - Delegate business logic to Actions, not controllers.
-
-## Do and Don't
-Do:
-- Use PascalCase path notation for page names (`Tickets/Index`, `Auth/Login`).
-- Use Form Requests for validation (Inertia auto-handles validation errors).
-- Use `redirect()->back()` after successful form submissions.
-- Use `Inertia::optional()` for expensive data that isn't always needed (frontend opts in via partial reload).
-- Share auth user and flash messages via `HandleInertiaRequests`.
-
-Don't:
-- Return JSON responses from Inertia controllers — always use `Inertia::render()` or redirects.
-- Put business logic in controllers.
-- Share large datasets globally — use `Inertia::optional()` or page-specific props.
-- Use `Inertia::render()` for API-only endpoints — keep API controllers separate.
 
 ## Examples
 ```php

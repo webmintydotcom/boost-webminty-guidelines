@@ -28,48 +28,32 @@ Apply Webminty's Tailwind CSS guidelines to keep styling consistent, fast, and f
 3. Apply the core Tailwind principle first (utility-first, default theme, no premature custom CSS), then variants, then component extraction.
 4. If a rule conflicts with existing project conventions, follow Webminty conventions and keep changes consistent across the file.
 
-## Core Rules (Summary)
-- Use Tailwind v4 with CSS-first config: `@import "tailwindcss";` plus `@theme { … }` in a single CSS entry file. **No `tailwind.config.js`.**
+## Core Rules
+- Use Tailwind v4 with CSS-first config: `@import "tailwindcss";` plus `@theme { … }` in a single CSS entry file (e.g. `resources/css/app.css`). **No `tailwind.config.js`.**
 - **Default to built-in utilities and theme variables.** Do not invent custom classes, CSS variables, or `@theme` extensions unless an existing utility/variable genuinely cannot express the design.
-- Prefer the default theme scale (spacing, color, radius, font-size, breakpoint) over custom values.
+- Prefer the default theme scale (spacing, color, radius, font-size, breakpoint) over custom values. The default palette is OKLCH-based; only override for brand colours.
 - Use arbitrary values (`w-[37px]`, `bg-[#abcdef]`) only for true one-offs; never as a substitute for the scale.
 - Add to `@theme` **only** when introducing a reusable design token (e.g. `--color-brand-*`, `--font-display`).
-- Extract repeated utility patterns to **components** (Blade, Livewire, React/Vue/Svelte), not to custom CSS classes via `@apply`.
+- Extract repeated utility patterns to **components** (Blade, Livewire, React/Vue/Svelte) the second time you reach for them — not to custom CSS classes via `@apply`.
 - Use `@apply` only inside `@layer components` for genuinely component-level styles (typography resets, third-party-library overrides) — not as a general DRY mechanism.
 - Use `@custom-variant` to **define** a new variant; use `@variant` to **apply** an existing variant inside custom CSS. They are not interchangeable.
-- Write classes mobile-first; layer up with `sm:`, `md:`, `lg:`, `xl:`, `2xl:` (and `@sm:`, `@md:` for container queries).
-- Sort utility classes with `prettier-plugin-tailwindcss`. Do not hand-sort.
+- Write classes mobile-first; layer up with `sm:`, `md:`, `lg:`, `xl:`, `2xl:` (and `@sm:`, `@md:` for container queries, which suit component-level responsiveness).
+- Sort utility classes with `prettier-plugin-tailwindcss` on save / via CI. Do not hand-sort.
 - Use the `dark:` variant for dark mode. Do not maintain separate light/dark stylesheets.
 - Use semantic colour tokens (`text-foreground`, `bg-card`, `border-border`) when the project uses a design system; otherwise prefer named scale colours (`text-zinc-900`, `bg-white`).
 - Use `data-*` and `aria-*` variants (`data-loading:opacity-50`, `aria-expanded:rotate-180`) over JS-toggled classes where possible.
-- Use `@source "…"` to include extra content paths only when Tailwind's auto-detection misses them.
-
-## Do and Don't
-Do:
-- Keep all Tailwind setup in a single CSS entry file (e.g. `resources/css/app.css`).
-- Use the default colour, spacing, radius, font-size, and breakpoint scales.
-- Promote a class set to a component (`<x-ui.button>`, `<Button />`) the second time you reach for it.
-- Sort classes with `prettier-plugin-tailwindcss` on save / via CI.
-- Use `data-*:` and `aria-*:` variants for stateful UI driven by HTML attributes.
-- Use container queries (`@container`, `@sm:`, `@md:`) for component-level responsiveness.
-- Use the OKLCH-based default palette in v4; only override for brand colours.
-- Use `@plugin "@tailwindcss/forms";` (or similar) at the top of the CSS entry file when needed.
 - Use `focus-visible:` (not `focus:`) for focus rings so they don't appear on mouse clicks.
 - Respect `prefers-reduced-motion` with `motion-safe:` / `motion-reduce:` on any animation or transition utility.
 - Use `sr-only` for screen-reader-only text; pair with `focus:not-sr-only` for skip-to-content links.
+- Use `@plugin "@tailwindcss/forms";` (or similar) at the top of the CSS entry file when needed, and `@source "…"` only when auto-detection misses content paths.
 
-Don't:
-- Construct class names dynamically (`bg-${color}-500`, `` `text-${size}` ``) — Tailwind's content scanner only sees **complete, unbroken** class strings. Map full class strings in a lookup object instead.
-- Default to `indigo-*`, `violet-*`, `purple-*`, `fuchsia-*`, or `pink-*` as an accent or brand colour. These dominate Tailwind's marketing material and have become an AI/template "tell". If the project has no defined brand, default to a neutral primary (`blue-600`, `emerald-600`, `sky-600`, or a custom `--color-brand-*` token via `@theme`).
-- Add a `tailwind.config.js` file — Tailwind v4 is CSS-first.
-- Use `@apply` to deduplicate utilities across templates — extract a component instead.
-- Use arbitrary values when an existing scale value works (`w-[16px]` → `w-4`).
-- Invent custom colour names (`bg-myblue`) when a default works (`bg-blue-500`).
-- Maintain manual class-sort order — let Prettier do it.
-- Use inline `style="…"` for values Tailwind can express.
-- Keep v3-only directives (`@tailwind base; @tailwind components; @tailwind utilities;`) in v4 projects — use `@import "tailwindcss";`.
-- Use `theme()` in CSS — read the CSS variable directly (`var(--color-brand-500)`).
-- Use `darkMode: 'class'` config — use the `@custom-variant dark (…)` CSS directive if you need to override the default media-query behaviour.
+## Avoid
+- Constructing class names dynamically (`bg-${color}-500`, `` `text-${size}` ``) — Tailwind's content scanner only sees **complete, unbroken** class strings. Map full class strings in a lookup object instead.
+- Defaulting to `indigo-*`, `violet-*`, `purple-*`, `fuchsia-*`, or `pink-*` as an accent or brand colour. These dominate Tailwind's marketing material and have become an AI/template "tell". If the project has no defined brand, default to a neutral primary (`blue-600`, `emerald-600`, `sky-600`, or a custom `--color-brand-*` token via `@theme`).
+- Inline `style="…"` for values Tailwind can express, or custom colour names (`bg-myblue`) when a default works.
+- v3-only directives (`@tailwind base; @tailwind components; @tailwind utilities;`) — use `@import "tailwindcss";`.
+- `theme()` in CSS — read the CSS variable directly (`var(--color-brand-500)`).
+- `darkMode: 'class'` config — use the `@custom-variant dark (…)` CSS directive if you need to override the default media-query behaviour.
 
 ## Examples
 

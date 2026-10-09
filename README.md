@@ -31,58 +31,17 @@ Skills activate automatically based on context, ensuring consistent adherence to
 
 ## Standards Overview
 
-### PHP
+The rules themselves live in each skill's `SKILL.md` (core rules) and `references/` topic files (detail), so they are maintained in one place.
 
-- `declare(strict_types=1)` in every file
-- All classes `final` by default
-- Typed properties, parameters, and return types (including `void`)
-- Constructor property promotion
-- Strict comparison (`===` / `!==`)
-- PSR-12 compliance (includes PSR-1)
-
-### Laravel
-
-- **Models** — `$guarded = ['id']`, `casts()` method, `#[Scope]` attribute for query scopes
-- **Actions** — Single-purpose `final` classes with an `execute()` method for business logic
-- **Controllers** — Thin controllers that delegate to Actions; Form Requests for validation
-- **DTOs** — Extend `Spatie\LaravelData\Data`, always `final`
-- **Routes** — Kebab-case URLs, dot-notation names, RESTful conventions
-- **Migrations** — Anonymous classes, `hash_id` pattern, boolean columns prefixed with `is_`/`has_`
-- **Testing** — Pest PHP with `test()` syntax, architecture tests to enforce standards
-- **Jobs** — `final`, `ShouldQueue`, dependencies injected in `handle()`
-
-### Tailwind CSS
-
-- **Tailwind v4** with CSS-first config — `@import "tailwindcss"` and `@theme` in a single CSS entry file; no `tailwind.config.js`
-- Default to built-in utilities and the default scale (spacing, colour, radius, font-size, breakpoint)
-- Brand tokens only via `@theme` (`--color-brand-*`, `--font-display`)
-- Extract repeated utility patterns to **components** (Blade / Livewire / Inertia), not custom CSS via `@apply`
-- Class ordering enforced by `prettier-plugin-tailwindcss`
-- Container queries (`@container`, `@sm:`, `@md:`) for component-level responsiveness
-- `data-*:` and `aria-*:` variants for stateful UI over JS class toggling
-- `focus-visible:` (not `focus:`) for focus rings
-
-### Naming Conventions
-
-| What | Convention | Example |
-|---|---|---|
-| URLs | kebab-case | `/about-us` |
-| Route names | dot notation | `tickets.show` |
-| Models | Singular PascalCase | `User` |
-| Actions | Verb-first PascalCase | `CreateTicket` |
-| Tables | Plural snake_case | `mash_items` |
-| Columns | snake_case | `is_active` |
-| Views | kebab-case | `ticket-list.blade.php` |
-| Commands | `app:` prefix, kebab-case | `app:send-email` |
-
-### Code Quality Tools
-
-| Tool | Purpose |
+| Skill | Covers |
 |---|---|
-| Laravel Pint | Code formatting |
-| PHPStan + Larastan | Static analysis (level 5) |
-| Rector | Automated refactoring |
-| Pest PHP | Testing |
+| `webminty-laravel-standards` | PHP/PSR-12, strict types, `final` classes, naming, models, migrations, Actions, controllers, routes, jobs, commands, API, Pest testing |
+| `webminty-tailwind-standards` | Tailwind v4 CSS-first setup, `@theme` tokens, utilities, class ordering, variants, dark mode, accessibility, component extraction |
+| `webminty-livewire-standards` | Livewire 4 components, attributes, islands, slots, form objects, navigation, testing |
+| `webminty-inertia-standards` | Inertia controllers, shared data, partial reloads, forms, SSR, testing |
+| `webminty-project-docs` | `features.md`, `DECISIONS.md`, `CHANGELOG.md` |
+
+Code quality tooling: Laravel Pint, PHPStan + Larastan (level 5), Rector, and Pest PHP.
 
 ## Per-Project File Conventions
 

@@ -26,48 +26,30 @@ Apply Webminty's Livewire 4 guidelines for projects using Livewire as the fronte
 2. Read only the reference file(s) listed under References that match the task.
 3. Apply `webminty-laravel-standards` first (PHP conventions, `final`, strict types), then Livewire-specific rules.
 
-## Core Rules (Summary)
+## Core Rules
 - Prefer single-file components (`.blade.php` in `resources/views/components/`) for most components.
 - Components must be `final` (class-based) or `new class extends Component` (single-file).
 - Note: `declare(strict_types=1)` cannot be used in single-file components (combined PHP/Blade format) — this is the one exception to the strict types rule.
-- Use `#[Title]` and `#[Layout]` attributes on full-page components.
+- Use `#[Title]` and `#[Layout]` attributes on every full-page component.
 - Use `#[Reactive]` on child component properties that should update when the parent re-renders.
 - Use `#[Modelable]` on child component properties for two-way parent-child binding via `wire:model`.
 - Use `#[Url]` for query string binding.
 - Use `#[Locked]` to prevent client modification of sensitive properties.
-- Use `#[On('event-name')]` for event listeners.
+- Use `#[On('event-name')]` for event listeners, and `$this->dispatch()` to fire them.
 - Use `#[Computed]` for derived data.
-- Use `#[Validate]` for property validation.
-- Use Livewire Form objects for form state and validation.
-- Use islands to isolate expensive re-renders.
-- Use slots for composable component content (default and named).
-- Use `wire:ref` to reference child components.
-- Use `wire:transition` for enter/leave animations (View Transitions API).
-- Use `data-loading` CSS classes instead of verbose `wire:loading` patterns.
-- Delegate business logic to Actions, not components.
-- Use `wire:navigate` for SPA-style navigation.
-
-## Do and Don't
-Do:
-- Use single-file components for most new components.
-- Use Form objects to encapsulate form state and validation.
-- Use `$this->redirect(route('...'), navigate: true)` for SPA-style redirects.
-- Use `wire:navigate` on links for SPA-style navigation.
-- Use islands to isolate independently re-rendering regions.
-- Use `data-loading:opacity-50` for loading states via CSS.
-- Use `wire:ref` to interact with child components from a parent.
-- Use `Route::livewire()` for Livewire page routes.
 - Use `#[Defer]` for deferred component loading and `#[Async]` for non-blocking actions.
-- Use `wire:sort` for drag-and-drop sorting.
-- Keep components thin — delegate to Actions.
+- Use `#[Validate]` for property validation, and Livewire Form objects for form state and validation (prefer them over inline validation rules).
+- Use islands to isolate independently re-rendering regions.
+- Use slots for composable component content (default and named).
+- Use `wire:ref` to reference child components, `wire:sort` for drag-and-drop sorting, and `wire:transition` for enter/leave animations (View Transitions API).
+- Use `data-loading` CSS classes (`data-loading:opacity-50`) instead of verbose `wire:loading` patterns.
+- Use `wire:navigate` on links and `$this->redirect(route('...'), navigate: true)` for SPA-style navigation.
+- Use `Route::livewire()` for Livewire page routes.
+- Keep components thin: delegate business logic to Actions, not components.
 
-Don't:
-- Put business logic in Livewire components.
-- Use inline validation rules when a Form object is appropriate.
-- Skip `#[Title]` or `#[Layout]` on full-page components.
-- Use `$this->emit()` (Livewire 2 syntax) — use `$this->dispatch()` instead.
-- Use complex `wire:loading` setups when `data-loading` CSS classes suffice.
-- Use the `⚡` emoji prefix for component filenames — disable via `make_command.emoji` config if needed.
+## Avoid
+- `$this->emit()` (Livewire 2 syntax) — use `$this->dispatch()`.
+- The `⚡` emoji prefix for component filenames — disable via `make_command.emoji` config if needed.
 
 ## Examples
 ```php
