@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [3.4.0] - 2026-10-08
+
+### Added
+- **`webminty-project-docs` skill** holding the `features.md`, `DECISIONS.md`, and `CHANGELOG.md` conventions
+
+### Changed
+- `core.blade.php` trimmed to short activation pointers (~1KB, down from ~6KB) so less context is loaded on every session
+- Split each skill's single large reference file into topic files under `references/`; each `SKILL.md` now indexes them so only the relevant files are read
+
 ## [3.3.0] - 2026-05-12
 
 ### Added

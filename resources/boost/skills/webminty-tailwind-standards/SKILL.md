@@ -24,7 +24,7 @@ Apply Webminty's Tailwind CSS guidelines to keep styling consistent, fast, and f
 
 ## Workflow
 1. Identify the artifact (Blade view, Livewire component, Inertia page/component, plain HTML, CSS entry file, theme definition).
-2. Read `references/webminty-tailwind-guidelines.md` and focus on the relevant section.
+2. Read only the reference file(s) listed under References that match the task.
 3. Apply the core Tailwind principle first (utility-first, default theme, no premature custom CSS), then variants, then component extraction.
 4. If a rule conflicts with existing project conventions, follow Webminty conventions and keep changes consistent across the file.
 
@@ -139,4 +139,10 @@ export function Badge({ tone = 'neutral', children }: BadgeProps) {
 ```
 
 ## References
-- `references/webminty-tailwind-guidelines.md`
+Read only what the task needs, all under `references/`:
+- `setup-theme.md` — Tailwind v4 setup, project structure, `@theme` tokens, default scales
+- `utilities-variants.md` — Utility usage, class ordering, variants, container queries, dark mode
+- `accessibility.md` — Focus rings, `sr-only`, reduced motion, touch targets, contrast
+- `components-customization.md` — Component extraction, `@utility`/`@variant`, `@apply`, arbitrary values, plugins, tooling
+- `anti-patterns-migration.md` — Anti-patterns (dynamic classes, Tailwind purple) and v3 → v4 migration
+- `quick-reference.md` — One-page cheat sheet

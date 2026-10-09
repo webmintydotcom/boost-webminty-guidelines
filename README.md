@@ -17,7 +17,7 @@ The package auto-discovers via Laravel's package discovery — no additional set
 
 ## What It Does
 
-This package registers four skills with Laravel Boost:
+This package registers five skills with Laravel Boost:
 
 | Skill | Activates When |
 |---|---|
@@ -25,8 +25,9 @@ This package registers four skills with Laravel Boost:
 | **webminty-tailwind-standards** | Writing or editing Tailwind CSS in Blade, Livewire, Inertia, or the CSS entry file |
 | **webminty-livewire-standards** | Working on Livewire components, form objects, or `wire:` directives |
 | **webminty-inertia-standards** | Working on controllers returning Inertia responses, shared data, or Inertia testing |
+| **webminty-project-docs** | Finishing a feature, making a non-obvious technical decision, or shipping a user-visible change |
 
-Skills activate automatically based on context, ensuring consistent adherence to Webminty's conventions regardless of frontend stack.
+Skills activate automatically based on context, ensuring consistent adherence to Webminty's conventions regardless of frontend stack. Each skill's `SKILL.md` is a short index; the detailed rules live in topic files under `references/` that are read only when the task needs them, keeping context usage low.
 
 ## Standards Overview
 
@@ -93,7 +94,7 @@ In addition to coding standards, this package mandates three documentation files
 | **`DECISIONS.md`** | Append-only log of non-obvious technical and architectural decisions (stack picks, package choices, data-model trade-offs, opting out of Laravel defaults). Each entry: `## YYYY-MM-DD — Title`, **Decision**, **Why**, **Alternatives considered**. | When making a choice another developer would reasonably ask "why did we do it this way?" about. Prior entries are never edited or deleted. |
 | **`CHANGELOG.md`** | Reverse-chronological log of user-visible changes, grouped by `Added` / `Changed` / `Fixed` / `Removed` / `Deprecated` / `Security` under a date or version heading. Follows [Keep a Changelog](https://keepachangelog.com). | When shipping a release, deploy, or user-visible change. Pre-launch projects collect entries under `## Unreleased`. |
 
-`features.md` is distinct from `README.md`: README covers how to install, run, and develop the project; `features.md` covers what the product does. The full convention details (including what *not* to put in each file) live in the always-loaded `core.blade.php` guideline.
+`features.md` is distinct from `README.md`: README covers how to install, run, and develop the project; `features.md` covers what the product does. The full convention details (including what *not* to put in each file) live in the `webminty-project-docs` skill.
 
 ## Full Reference
 

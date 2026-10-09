@@ -18,11 +18,11 @@ Apply Webminty's Laravel and PHP guidelines to keep code style consistent and La
 
 ## Scope
 - In scope: `.php`, `.blade.php`, Laravel conventions (routes, controllers, config, validation, migrations, tests, actions, jobs, DTOs, enums, commands, API).
-- Out of scope: JS/TS, infrastructure, database schema design, non-Laravel frameworks, Tailwind CSS (see `webminty-tailwind-standards`), frontend-stack-specific patterns (see `webminty-livewire-standards` or `webminty-inertia-standards` skills).
+- Out of scope: JS/TS, infrastructure, non-Laravel frameworks, Tailwind CSS (see `webminty-tailwind-standards`), frontend-stack-specific patterns (see `webminty-livewire-standards` or `webminty-inertia-standards` skills).
 
 ## Workflow
 1. Identify the artifact (action, controller, model, Blade, test, job, DTO, enum, route, migration, etc.).
-2. Read `references/webminty-laravel-guidelines.md` and focus on the relevant sections.
+2. Read only the reference file(s) listed under References that match the task.
 3. Apply the core Laravel principle first, then PHP standards, then section-specific rules.
 4. If a rule conflicts with existing project conventions, follow Laravel conventions and keep changes consistent.
 
@@ -129,4 +129,10 @@ test('can create a ticket', function (): void {
 ```
 
 ## References
-- `references/webminty-laravel-guidelines.md`
+Read only what the task needs, all under `references/`:
+- `php-standards.md` — PHP standards, strict types, naming conventions, directory structure
+- `models-database.md` — Models, casts, scopes, Eloquent, migrations, `hash_id`
+- `actions-controllers-routes.md` — Actions, controllers, Form Requests, routes, Blade
+- `jobs-commands-api.md` — Jobs, console commands, API standards, batches vs pipelines
+- `testing-tooling.md` — General Laravel, Pint/PHPStan/Rector, Pest testing, architecture tests
+- `quick-reference.md` — One-page cheat sheet and Laravel 13 notes

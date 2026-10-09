@@ -24,7 +24,7 @@ Apply Webminty's Inertia guidelines for projects using Inertia.js as the fronten
 
 ## Workflow
 1. Identify the Inertia artifact (controller, middleware, shared data, route, test).
-2. Read `references/webminty-inertia-guidelines.md` for detailed patterns.
+2. Read only the reference file(s) listed under References that match the task.
 3. Apply `webminty-laravel-standards` first (PHP conventions, `final`, strict types), then Inertia-specific rules.
 
 ## Core Rules (Summary)
@@ -83,4 +83,7 @@ test('can view ticket', function (): void {
 ```
 
 ## References
-- `references/webminty-inertia-guidelines.md`
+Read only what the task needs, all under `references/`:
+- `controllers-data.md` — Controllers, shared data, partial reloads
+- `forms-routing.md` — Form handling, redirects, routes, directory structure, SSR
+- `testing.md` — Inertia testing

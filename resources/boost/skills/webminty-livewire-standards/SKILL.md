@@ -23,7 +23,7 @@ Apply Webminty's Livewire 4 guidelines for projects using Livewire as the fronte
 
 ## Workflow
 1. Identify the Livewire artifact (single-file component, class-based component, form object, island, Blade view with `wire:` directives).
-2. Read `references/webminty-livewire-guidelines.md` for detailed patterns.
+2. Read only the reference file(s) listed under References that match the task.
 3. Apply `webminty-laravel-standards` first (PHP conventions, `final`, strict types), then Livewire-specific rules.
 
 ## Core Rules (Summary)
@@ -113,4 +113,8 @@ test('can render ticket list', function (): void {
 ```
 
 ## References
-- `references/webminty-livewire-guidelines.md`
+Read only what the task needs, all under `references/`:
+- `components-attributes.md` — Component formats and `#[...]` attributes
+- `islands-slots-forms.md` — Islands, slots, form objects, navigation
+- `blade-structure.md` — Blade integration, naming, directory structure
+- `testing.md` — Livewire testing and architecture tests
