@@ -14,6 +14,8 @@ metadata:
 - When shipping a release, deploy, or user-visible change.
 - When the project moves from development to live.
 
+These three files are explicitly required by this guideline. They override any general rule against creating documentation files unless the user asks.
+
 ## Project Feature Log (`features.md`)
 
 - Every project must maintain a `features.md` file at the repository root. It is the canonical record of what the product does, used for future documentation, marketing copy, and build-out planning.

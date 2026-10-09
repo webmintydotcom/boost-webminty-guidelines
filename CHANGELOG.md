@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [3.4.1] - 2026-10-08
+
+### Fixed
+- `webminty-livewire-standards` frontmatter no longer fails YAML parsing (`wire: directives` in the description had an unquoted colon)
+
+### Changed
+- `webminty-project-docs` states that its three files override any general "don't create documentation files" rule
+- `core.blade.php` tells the assistant to follow Webminty standards over conflicting generic Laravel Boost skills
+
 ## [3.4.0] - 2026-10-08
 
 ### Added
