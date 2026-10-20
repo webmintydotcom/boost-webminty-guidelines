@@ -30,12 +30,15 @@ Apply Webminty's Laravel and PHP guidelines to keep code style consistent and La
 - Follow Laravel conventions first.
 - Follow PSR-12 (includes PSR-1).
 - Every PHP file must have `declare(strict_types=1)`.
-- All classes should be `final` by default.
 - Use typed properties and explicit return types (including `void`).
 - Use constructor property promotion when possible.
-- Prefer early returns and avoid `else` when possible.
+- Handle error cases first and keep the happy path last; prefer early returns and avoid `else`.
+- Put ternary parts on their own lines unless the ternary is short.
 - Always use curly braces for control structures.
 - Use string interpolation over concatenation.
+- Put blank lines between statements; keep runs of equivalent one-liners together; no blank lines just inside `{}`.
+- Avoid comments; write expressive code and extract named methods. When a comment is needed, explain why, not what.
+- Avoid docblocks; add one only when types can't express it (generics, array shapes) or the code is genuinely confusing.
 - Use strict comparison (`===`/`!==`).
 - Use kebab-case URLs, dot-notation route names, and snake_case database columns.
 - Use the `#[Fillable([...])]` attribute to list mass-assignable columns; do not use `$guarded` or `#[Unguarded]`.
@@ -43,11 +46,12 @@ Apply Webminty's Laravel and PHP guidelines to keep code style consistent and La
 - Use the `#[Scope]` attribute for query scopes, not `scopeX()` methods.
 - Use anonymous migrations (`return new class`), the `hash_id` pattern for public-facing IDs, and `is_`/`has_` prefixes for boolean columns.
 - Use Form Requests for controller validation, with array notation for rules (not pipe syntax).
-- Controllers stay thin: delegate business logic to Actions (`final` classes with a single `execute()` method).
-- DTOs extend `Spatie\LaravelData\Data` and are `final`.
+- Controllers stay thin: delegate business logic to Actions (classes with a single `execute()` method).
+- DTOs extend `Spatie\LaravelData\Data`.
 - Use backed enums (`enum Status: int`) with PascalCase cases; cast enum columns in the model's `casts()` method.
 - Use `config()` and avoid `env()` outside config files.
 - Use Pest PHP for all tests with `test()` function syntax, and architecture tests to enforce coding standards.
+- Structure tests as arrange, act, assert; name them as sentences describing behaviour.
 
 ## Avoid
 - `dd()`, `dump()`, `ray()`, `var_dump()`, or `print_r` in committed code.
@@ -56,18 +60,23 @@ Apply Webminty's Laravel and PHP guidelines to keep code style consistent and La
 ## Examples
 ```php
 // Action
-final class CreateTicket
+class CreateTicket
 {
     public function execute(TicketData $data): Ticket
     {
-        return Ticket::create($data->toArray());
+        return Ticket::query()->create([
+            'title' => $data->title,
+            'body' => $data->body,
+            'user_id' => $data->user_id,
+            'category_id' => $data->category_id,
+        ]);
     }
 }
 ```
 
 ```php
 // Model
-final class Ticket extends Model
+class Ticket extends Model
 {
     use HasFactory;
     use HasHashIds;

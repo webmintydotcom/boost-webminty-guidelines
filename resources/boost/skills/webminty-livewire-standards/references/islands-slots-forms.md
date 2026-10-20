@@ -106,7 +106,7 @@ namespace App\Livewire\Forms;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 
-final class LoginForm extends Form
+class LoginForm extends Form
 {
     #[Validate('required|string|email')]
     public string $email = '';
@@ -125,7 +125,7 @@ final class LoginForm extends Form
 ### Form with Actions
 
 ```php
-final class TicketForm extends Form
+class TicketForm extends Form
 {
     #[Validate('required|string|max:255')]
     public string $title = '';
@@ -184,7 +184,6 @@ class extends Component {
 ```
 
 ### Key Rules
-- Form objects must be `final`
 - Use `#[Validate]` attributes for validation rules
 - Delegate business logic to Actions from form objects
 - Call `$this->validate()` before processing

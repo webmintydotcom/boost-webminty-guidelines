@@ -24,11 +24,11 @@ Apply Webminty's Livewire 4 guidelines for projects using Livewire as the fronte
 ## Workflow
 1. Identify the Livewire artifact (single-file component, class-based component, form object, island, Blade view with `wire:` directives).
 2. Read only the reference file(s) listed under References that match the task.
-3. Apply `webminty-laravel-standards` first (PHP conventions, `final`, strict types), then Livewire-specific rules.
+3. Apply `webminty-laravel-standards` first (PHP conventions, strict types), then Livewire-specific rules.
 
 ## Core Rules
 - Prefer single-file components (`.blade.php` in `resources/views/components/`) for most components.
-- Components must be `final` (class-based) or `new class extends Component` (single-file).
+- Components are plain classes (class-based) or `new class extends Component` (single-file).
 - Note: `declare(strict_types=1)` cannot be used in single-file components (combined PHP/Blade format) — this is the one exception to the strict types rule.
 - Use `#[Title]` and `#[Layout]` attributes on every full-page component.
 - Use `#[Reactive]` on child component properties that should update when the parent re-renders.
@@ -73,7 +73,7 @@ class extends Component {
 
 ```php
 // Form object
-final class LoginForm extends Form
+class LoginForm extends Form
 {
     #[Validate('required|string|email')]
     public string $email = '';

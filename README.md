@@ -38,7 +38,7 @@ The rules themselves live in each skill's `SKILL.md` (core rules) and `reference
 
 | Skill | Covers |
 |---|---|
-| `webminty-laravel-standards` | PHP 8.4/PSR-12, strict types, `final` classes, naming, Laravel 13 attributes, models, migrations, Actions, controllers, routes, jobs, commands, API, Pest testing |
+| `webminty-laravel-standards` | PHP 8.4/PSR-12, strict types, naming, Laravel 13 attributes, models, migrations, Actions, controllers, routes, jobs, commands, API, Pest testing |
 | `webminty-tailwind-standards` | Tailwind v4 CSS-first setup, `@theme` tokens, utilities, class ordering, variants, dark mode, accessibility, component extraction |
 | `webminty-livewire-standards` | Livewire 4 components, attributes, islands, slots, form objects, navigation, testing |
 | `webminty-inertia-standards` | Inertia controllers, shared data, partial reloads, forms, SSR, testing |

@@ -22,21 +22,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable(['title', 'body', 'user_id', 'category_id', 'is_active', 'due_at', 'settings', 'status'])]
-final class Ticket extends Model
+class Ticket extends Model
 {
     use HasFactory;
     use HasHashIds;
     use SoftDeletes;
-
-    protected function casts(): array
-    {
-        return [
-            'is_active' => 'boolean',
-            'due_at' => 'datetime',
-            'settings' => 'array',
-            'status' => Status::class,
-        ];
-    }
 
     public function user(): BelongsTo
     {
@@ -47,6 +37,16 @@ final class Ticket extends Model
     {
         return $this->hasMany(TicketItem::class)
             ->orderBy('position');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'is_active' => 'boolean',
+            'due_at'    => 'datetime',
+            'settings'  => 'array',
+            'status'    => Status::class,
+        ];
     }
 
     #[Scope]
@@ -70,7 +70,7 @@ use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 #[Table('custom_tickets')]
 #[Connection('mysql')]
 #[UsePolicy(TicketPolicy::class)]
-final class Ticket extends Model
+class Ticket extends Model
 {
     // ...
 }
@@ -114,7 +114,7 @@ final class Ticket extends Model
 - `Data::class` for Spatie LaravelData columns
 
 ### HasHashIds Trait
-Generate URL-safe public IDs. Uses the `booted()` method to register the observer — this avoids the Laravel 13 restriction against instantiating models inside `boot()`:
+Generate URL-safe public IDs. Register model event callbacks in the `booted()` method:
 
 ```php
 trait HasHashIds
@@ -122,16 +122,13 @@ trait HasHashIds
     protected static function booted(): void
     {
         static::created(function ($model): void {
-            $reflect = new ReflectionClass(self::class);
-            $connection = Str::lower($reflect->getShortName());
-
             if ($model->hash_id) {
                 return;
             }
 
-            $model->hash_id = Hashids::connection($connection)
+            $model->hash_id = Hashids::connection(Str::lower(class_basename($model)))
                 ->encode((string) $model->id);
-            $model->save();
+            $model->saveQuietly();
         });
     }
 }
@@ -171,7 +168,9 @@ public function boot(): void
 
 ### Model boot() Restriction
 
-Laravel 13 throws a `LogicException` if you instantiate a model inside `boot()` or `booted()`. Move any model-creating logic to observers or event listeners. Use `booted()` (not `boot()`) for registering model event callbacks — this is compatible with both Laravel 12 and 13.
+Laravel 13 throws a `LogicException` if a model is instantiated while that model class is still booting, which includes inside `boot()`, `booted()` and the `#[Boot]`/`#[Initialize]` hooks. Do not call `new Model`, `Model::create()` or `Model::query()->first()` for the same class there. Registering event callbacks (`static::created(...)`) in `booted()` is fine because the callbacks run later, after boot. Move any model-creating logic into observers or event listeners.
+
+`HasHashIds` writes `hash_id` in a second query after insert, so the value is `null` until the `created` event has run. Do not read `hash_id` in `creating`/`saving` listeners, and prefer `HasUlids` when a public ID does not need to be derived from the primary key.
 
 ---
 
@@ -214,7 +213,7 @@ Ticket::active()->forUser($user)->get();
 For models with 3+ scopes:
 
 ```php
-final class UserBuilder extends Builder
+class UserBuilder extends Builder
 {
     public function active(): self
     {
@@ -247,7 +246,7 @@ $tickets = Ticket::with([
 
 ```php
 DB::transaction(function () use ($data): Order {
-    $order = Order::create($data);
+    $order = Order::query()->create($data);
     $order->items()->createMany($data['items']);
     return $order;
 });
@@ -300,6 +299,8 @@ return new class extends Migration
     }
 };
 ```
+
+Always write a `down()` method that reverses `up()`, so `migrate:rollback` works.
 
 ### Column Conventions
 

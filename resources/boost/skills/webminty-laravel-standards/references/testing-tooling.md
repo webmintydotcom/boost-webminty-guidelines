@@ -23,6 +23,8 @@ Laravel 13 renames `VerifyCsrfToken` to `PreventRequestForgery` and adds dual-la
 ### Configuration
 - Use `config()` everywhere, never `env()` outside config files
 - Type-cast env values in config files
+- Config files and keys are snake_case
+- Add third-party service credentials to `config/services.php` rather than creating a new config file
 
 ### Logging
 - Use appropriate levels (debug, info, warning, error, critical)
@@ -32,7 +34,7 @@ Laravel 13 renames `VerifyCsrfToken` to `PreventRequestForgery` and adds dual-la
 ### Events
 
 ```php
-final class OrderPlaced
+class OrderPlaced
 {
     use Dispatchable;
     use SerializesModels;
@@ -46,7 +48,7 @@ final class OrderPlaced
 ### Custom Exceptions
 
 ```php
-final class InsufficientFundsException extends Exception
+class InsufficientFundsException extends Exception
 {
     public function __construct(
         public readonly float $available,
@@ -73,7 +75,6 @@ final class InsufficientFundsException extends Exception
 
 ### Key Pint Rules
 - `declare_strict_types`: Adds `declare(strict_types=1)`
-- `final_class`: Makes classes `final`
 - `strict_comparison`: Uses `===` instead of `==`
 - `void_return`: Adds `void` return types
 - `new_with_parentheses: false`: `new User` instead of `new User()`
@@ -136,6 +137,10 @@ test('can create a ticket', function (): void {
 });
 ```
 
+### Test Structure and Naming
+- Structure tests as arrange, act, assert, with a blank line between each part
+- Name tests as sentences describing the behaviour: `test('guests cannot view tickets', ...)`
+
 ### Architecture Tests
 
 ```php
@@ -158,17 +163,15 @@ arch()
 
 arch()
     ->expect('App\Actions')
-    ->toHaveMethod('execute')
-    ->toBeFinal();
+    ->toHaveMethod('execute');
 
 arch()
     ->expect('App\Data')
-    ->toExtend('Spatie\LaravelData\Data')
-    ->toBeFinal();
+    ->toExtend('Spatie\LaravelData\Data');
 
 arch()
     ->expect('App\Http\Controllers')
-    ->toBeFinal();
+    ->toHaveSuffix('Controller');
 
 arch()
     ->expect('App\Enums')
@@ -176,13 +179,11 @@ arch()
 
 arch()
     ->expect('App\Jobs')
-    ->toImplement('Illuminate\Contracts\Queue\ShouldQueue')
-    ->toBeFinal();
+    ->toImplement('Illuminate\Contracts\Queue\ShouldQueue');
 
 arch()
     ->expect('App\Http\Requests')
-    ->toExtend('Illuminate\Foundation\Http\FormRequest')
-    ->toBeFinal();
+    ->toExtend('Illuminate\Foundation\Http\FormRequest');
 
 arch()->preset()->php();
 arch()->preset()->security()->ignoring('md5');
@@ -223,7 +224,7 @@ test('can view dashboard', function (): void {
 ### Factory Best Practices
 
 ```php
-final class TicketFactory extends Factory
+class TicketFactory extends Factory
 {
     public function definition(): array
     {

@@ -12,17 +12,17 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Tickets;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\TicketResource;
+use App\Http\Resources\TicketsResource;
 use App\Models\Ticket;
 use Inertia\Inertia;
 use Inertia\Response;
 
-final class ShowController extends Controller
+class ShowController extends Controller
 {
     public function __invoke(Ticket $ticket): Response
     {
         return Inertia::render('Tickets/Show', [
-            'ticket' => TicketResource::make($ticket->load('user')),
+            'ticket' => TicketsResource::make($ticket->load('user')),
         ]);
     }
 }
@@ -31,12 +31,12 @@ final class ShowController extends Controller
 ### Index Controller with Filtering
 
 ```php
-final class IndexController extends Controller
+class IndexController extends Controller
 {
     public function __invoke(Request $request): Response
     {
         return Inertia::render('Tickets/Index', [
-            'tickets' => TicketResource::collection(
+            'tickets' => TicketsResource::collection(
                 Ticket::query()
                     ->when($request->search, fn ($q, $search) => $q->search($search))
                     ->latest()
@@ -52,7 +52,7 @@ final class IndexController extends Controller
 ### Store Controller
 
 ```php
-final class StoreController extends Controller
+class StoreController extends Controller
 {
     public function __invoke(
         StoreTicketRequest $request,
@@ -90,11 +90,11 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
-use App\Http\Resources\UserResource;
+use App\Http\Resources\UsersResource;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
-final class HandleInertiaRequests extends Middleware
+class HandleInertiaRequests extends Middleware
 {
     public function share(Request $request): array
     {
@@ -102,12 +102,12 @@ final class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user()
-                    ? UserResource::make($request->user())
+                    ? UsersResource::make($request->user())
                     : null,
             ],
             'flash' => [
                 'success' => $request->session()->get('success'),
-                'error' => $request->session()->get('error'),
+                'error'   => $request->session()->get('error'),
             ],
         ];
     }
@@ -129,12 +129,12 @@ final class HandleInertiaRequests extends Middleware
 ### Optional Props
 
 ```php
-final class ShowController extends Controller
+class ShowController extends Controller
 {
     public function __invoke(Request $request, Ticket $ticket): Response
     {
         return Inertia::render('Tickets/Show', [
-            'ticket' => TicketResource::make($ticket),
+            'ticket' => TicketsResource::make($ticket),
 
             // Only loaded on explicit partial reload request
             'comments' => Inertia::optional(
@@ -165,12 +165,12 @@ final class ShowController extends Controller
 `Inertia::defer()` loads data in a separate request **after** the initial page renders. The page loads immediately with its core data, and the deferred props are fetched automatically in the background. No extra client-side code is needed — Inertia triggers the follow-up request on its own.
 
 ```php
-final class ShowController extends Controller
+class ShowController extends Controller
 {
     public function __invoke(Request $request, Ticket $ticket): Response
     {
         return Inertia::render('Tickets/Show', [
-            'ticket' => TicketResource::make($ticket),
+            'ticket' => TicketsResource::make($ticket),
 
             // Loaded automatically after initial page render
             'activityLog' => Inertia::defer(
@@ -183,7 +183,7 @@ final class ShowController extends Controller
                 'sidebar',
             ),
             'onlineUsers' => Inertia::defer(
-                fn () => UserResource::collection(User::online()->get()),
+                fn () => UsersResource::collection(User::online()->get()),
                 'sidebar',
             ),
         ]);
@@ -219,7 +219,7 @@ Use `Inertia::defer()` for data that is needed on the page but not critical for 
 
 // Merge — appends to existing data (infinite scroll / pagination)
 'tickets' => Inertia::merge(
-    fn () => TicketResource::collection(
+    fn () => TicketsResource::collection(
         Ticket::query()->paginate(15),
     ),
 ),

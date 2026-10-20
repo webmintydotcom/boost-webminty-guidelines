@@ -70,6 +70,5 @@ test('dispatches event after creation', function (): void {
 // For class-based components
 arch()
     ->expect('App\Livewire')
-    ->toExtend('Livewire\Component')
-    ->toBeFinal();
+    ->toExtend('Livewire\Component');
 ```

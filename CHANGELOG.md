@@ -11,6 +11,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 - Model attribute table expanded (`#[Fillable]`, `#[Hidden]`, `#[Visible]`, `#[Appends]`, `#[Touches]`, `#[ObservedBy]`, `#[UseFactory]`, `#[CollectedBy]`, `#[UseResource]`, `#[RouteKey]`); mass-assignment rule is now `#[Fillable([...])]` instead of `$guarded = ['id']`
 - Listed the remaining queue job attributes
 - `php-standards.md` gains a PHP 8.4 section (property hooks, asymmetric visibility, `new` chaining, `array_find`/`array_any`/`array_all`, `#[Deprecated]`) and the PHP 8+ list now includes `readonly` classes, `never`, first-class callables and `#[Override]`
+- **Breaking:** `final` is no longer required on classes (models, actions, controllers, jobs, DTOs, Form Requests, Livewire components); removed from examples, rules, the Pint `final_class` rule and the `toBeFinal()` architecture tests
+- Action examples map DTO fields explicitly into `Model::query()->create([...])` instead of `create($data->toArray())`
+- `HasHashIds` example uses `class_basename()` and `saveQuietly()`; the `booted()` explanation and the Laravel 13 boot restriction are corrected
+- Controller attribute docs say when to use `#[Authorize]` vs `$this->authorize()`; API auth guidance now covers Sanctum vs Passport
+- Added rules from Spatie's guidelines: docblocks (avoid unless needed), happy path last and multi-line ternaries, comments (avoid; explain why), whitespace, policy naming, `@lang` ban, class suffixes (events, listeners, commands, mailables, plural resources), command output, test structure/naming, snake_case config and `config/services.php`, custom validation rule naming
+- Resources are plural by default (`TicketsResource`), singular when they only represent one thing and commands carry a `Command` suffix in all examples
+- Code examples were run through `php -l` and Pint: `=>` aligned, class element order fixed, job properties separated, route example imports corrected
 - Testing docs no longer pin a Pest/PHPUnit version pairing
 
 ## [3.4.1] - 2026-10-08

@@ -18,7 +18,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-final class ProcessOrder implements ShouldQueue
+class ProcessOrder implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -26,7 +26,9 @@ final class ProcessOrder implements ShouldQueue
     use SerializesModels;
 
     public int $tries = 3;
+
     public int $backoff = 60;
+
     public int $timeout = 120;
 
     public function __construct(
@@ -42,7 +44,7 @@ final class ProcessOrder implements ShouldQueue
     {
         Log::error('Order processing failed', [
             'order_id' => $this->order->id,
-            'error' => $exception?->getMessage(),
+            'error'    => $exception?->getMessage(),
         ]);
     }
 }
@@ -65,7 +67,7 @@ use Illuminate\Queue\Attributes\WithoutRelations;
 #[Timeout(120)]
 #[Connection('redis')]
 #[Queue('orders')]
-final class ProcessOrder implements ShouldQueue
+class ProcessOrder implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -88,7 +90,7 @@ final class ProcessOrder implements ShouldQueue
 Other job attributes: `#[Delay]`, `#[MaxExceptions]`, `#[UniqueFor]`, `#[FailOnTimeout]`, `#[DeleteWhenMissingModels]`, `#[CountCrashesAsExceptions]`, `#[DebounceFor]`.
 
 ### Key Rules
-- Jobs must be `final` and implement `ShouldQueue`
+- Jobs must implement `ShouldQueue`
 - Use one trait per line
 - Inject dependencies in `handle()`, not constructor
 - Store minimal data (models serialize to IDs)
@@ -132,7 +134,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 
-final class CleanupInactiveUsers extends Command
+class CleanupInactiveUsersCommand extends Command
 {
     protected $signature = 'app:cleanup-inactive-users
                             {--days=30 : Days of inactivity threshold}
@@ -161,6 +163,21 @@ final class CleanupInactiveUsers extends Command
 - Always provide descriptions
 - Support dry-run for destructive commands
 - Return `Command::SUCCESS` or `Command::FAILURE`
+
+### Output
+- Always give feedback (`$this->comment('All ok!')`)
+- Show progress for loops and a summary at the end
+- Print before processing each item, so a failure shows which item broke
+
+```php
+$items->each(function (Item $item): void {
+    $this->info("Processing item id `{$item->id}`...");
+
+    $this->processItem($item);
+});
+
+$this->comment("Processed {$items->count()} items.");
+```
 
 ### Scheduling
 
@@ -219,14 +236,14 @@ app/Http/Controllers/Api/
 Use Laravel API Resources:
 
 ```php
-final class TicketResource extends JsonResource
+class TicketsResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
         return [
             'id' => $this->hash_id,
             'title' => $this->title,
-            'user' => new UserResource($this->whenLoaded('user')),
+            'user' => new UsersResource($this->whenLoaded('user')),
             'created_at' => $this->created_at->toIso8601String(),
         ];
     }
@@ -234,7 +251,8 @@ final class TicketResource extends JsonResource
 ```
 
 ### Authentication
-Use Laravel Sanctum for API authentication.
+- Use Laravel Sanctum for first-party SPA (cookie) and personal/mobile API token authentication
+- Use Laravel Passport only when third-party clients need OAuth2 (authorization codes, scopes, client credentials)
 
 ### Rate Limiting
 Apply rate limits liberally:
@@ -282,7 +300,7 @@ app(Pipeline::class)
 ### Batch Example
 
 ```php
-final class CreateUserBatch
+class CreateUserBatch
 {
     public function handle(UserData $data, array $slackChannels): User
     {

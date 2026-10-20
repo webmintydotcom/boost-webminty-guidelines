@@ -25,7 +25,7 @@ Apply Webminty's Inertia guidelines for projects using Inertia.js as the fronten
 ## Workflow
 1. Identify the Inertia artifact (controller, middleware, shared data, route, test).
 2. Read only the reference file(s) listed under References that match the task.
-3. Apply `webminty-laravel-standards` first (PHP conventions, `final`, strict types), then Inertia-specific rules.
+3. Apply `webminty-laravel-standards` first (PHP conventions, strict types), then Inertia-specific rules.
 
 ## Core Rules
 - Controllers return `Inertia::render('PageName', [...props])`, never JSON. Keep API-only endpoints in separate API controllers.
@@ -39,12 +39,12 @@ Apply Webminty's Inertia guidelines for projects using Inertia.js as the fronten
 ## Examples
 ```php
 // Inertia controller
-final class ShowController extends Controller
+class ShowController extends Controller
 {
     public function __invoke(Ticket $ticket): Response
     {
         return Inertia::render('Tickets/Show', [
-            'ticket' => TicketResource::make($ticket),
+            'ticket' => TicketsResource::make($ticket),
             'comments' => Inertia::optional(
                 fn () => CommentResource::collection($ticket->comments),
             ),

@@ -4,16 +4,15 @@
 
 ### Must-Have in Every PHP File
 - `declare(strict_types=1)`
-- `final` class declaration
 - Explicit return types on all methods
 - Type hints on all parameters
 
 ### Class Conventions
-- Actions: `final class VerbNoun { public function execute(): ... }`
-- Models: `final class Noun extends Model` with `#[Fillable([...])]` and `casts()` method
-- DTOs: `final class NounData extends Data`
-- Jobs: `final class VerbNoun implements ShouldQueue`
-- Commands: `final class VerbNoun extends Command` with `app:kebab-case` signature
+- Actions: `class VerbNoun { public function execute(): ... }`
+- Models: `class Noun extends Model` with `#[Fillable([...])]` and `casts()` method
+- DTOs: `class NounData extends Data`
+- Jobs: `class VerbNoun implements ShouldQueue`
+- Commands: `class VerbNounCommand extends Command` with `app:kebab-case` signature
 
 ### Validation
 - Always use array syntax: `['required', 'string', 'max:255']`

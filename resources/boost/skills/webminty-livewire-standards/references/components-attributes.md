@@ -85,7 +85,7 @@ use Livewire\Component;
 
 #[Title('Dashboard')]
 #[Layout('components.layouts.app')]
-final class Dashboard extends Component
+class Dashboard extends Component
 {
     public function render(): View
     {
@@ -117,7 +117,6 @@ php artisan livewire:convert ticket-list --mfc    # Convert to multi-file
 
 ### Key Rules
 - Prefer single-file components for most cases
-- Class-based components must be `final`
 - Single-file components use `new class extends Component`
 - Use `#[Title]` and `#[Layout]` attributes on all full-page components
 - Keep components thin — delegate business logic to Actions

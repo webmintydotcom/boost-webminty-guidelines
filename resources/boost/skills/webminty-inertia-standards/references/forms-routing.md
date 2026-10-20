@@ -7,7 +7,7 @@ Inertia handles validation errors automatically. When a Form Request fails, Lara
 
 ```php
 // Controller — no special Inertia handling needed for validation
-final class StoreController extends Controller
+class StoreController extends Controller
 {
     public function __invoke(
         StoreTicketRequest $request,
@@ -24,7 +24,7 @@ final class StoreController extends Controller
 
 ```php
 // Form Request — standard Laravel, Inertia handles the rest
-final class StoreTicketRequest extends FormRequest
+class StoreTicketRequest extends FormRequest
 {
     public function rules(): array
     {
@@ -89,17 +89,24 @@ return Inertia::location($externalUrl);
 
 declare(strict_types=1);
 
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Tickets\CreateController;
+use App\Http\Controllers\Tickets\DestroyController;
+use App\Http\Controllers\Tickets\IndexController;
+use App\Http\Controllers\Tickets\ShowController;
+use App\Http\Controllers\Tickets\StoreController;
+use App\Http\Controllers\Tickets\UpdateController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
-    Route::get('/tickets', Tickets\IndexController::class)->name('tickets.index');
-    Route::get('/tickets/create', Tickets\CreateController::class)->name('tickets.create');
-    Route::post('/tickets', Tickets\StoreController::class)->name('tickets.store');
-    Route::get('/tickets/{ticket:hash_id}', Tickets\ShowController::class)->name('tickets.show');
-    Route::put('/tickets/{ticket:hash_id}', Tickets\UpdateController::class)->name('tickets.update');
-    Route::delete('/tickets/{ticket:hash_id}', Tickets\DestroyController::class)->name('tickets.destroy');
+    Route::get('/tickets', IndexController::class)->name('tickets.index');
+    Route::get('/tickets/create', CreateController::class)->name('tickets.create');
+    Route::post('/tickets', StoreController::class)->name('tickets.store');
+    Route::get('/tickets/{ticket:hash_id}', ShowController::class)->name('tickets.show');
+    Route::put('/tickets/{ticket:hash_id}', UpdateController::class)->name('tickets.update');
+    Route::delete('/tickets/{ticket:hash_id}', DestroyController::class)->name('tickets.destroy');
 });
 ```
 
@@ -135,8 +142,8 @@ app/Http/Middleware/
 └── HandleInertiaRequests.php
 
 app/Http/Resources/
-├── TicketResource.php
-└── UserResource.php
+├── TicketsResource.php
+└── UsersResource.php
 ```
 
 ### Frontend Side (for reference only — conventions are out of scope)

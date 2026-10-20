@@ -34,17 +34,27 @@ public function find(string $hashId): ?User
 public function execute(int|string|Item $item): void
 ```
 
-### Final Classes
-Classes should be `final` by default:
+### Docblocks
+Avoid docblocks. Add one only when it is absolutely needed:
+- The type system can't express it: generics on iterables, array shapes
+- The code is genuinely confusing and the docblock explains *why* or *what it means*, not what the types already say
+
+Rules when you do write one:
+- Never repeat what the signature already says
+- Always import class names; never use fully qualified names
+- Prefer one line: `/** @return Collection<int, User> */`
+- Give iterables key and value types
+- Use array shapes for fixed keys, one key per line
 
 ```php
-final class CreateTicket
-{
-    public function execute(TicketData $data): Ticket
-    {
-        return Ticket::create($data->toArray());
-    }
-}
+/** @return Collection<int, User> */
+public function getUsers(): Collection
+
+/** @return array{
+    first: Ticket,
+    second: Ticket
+} */
+public function pair(): array
 ```
 
 ### Visibility
@@ -54,7 +64,7 @@ Always declare explicit visibility on properties and methods.
 Use constructor promotion for DTOs and simple classes:
 
 ```php
-final class TicketData extends Data
+class TicketData extends Data
 {
     public function __construct(
         public string $title,
@@ -89,7 +99,7 @@ enum WeightTypes: string
 - **Named arguments** for many parameters
 - **Null coalescing**: `$name = $user->name ?? 'Guest'`
 - **Null coalescing assignment**: `$this->cache ??= new Cache()`
-- **`readonly` classes** for immutable value objects: `final readonly class Money`
+- **`readonly` classes** for immutable value objects: `readonly class Money`
 - **`never`** return type for methods that always throw or exit
 - **First-class callable syntax**: `array_map(strtoupper(...), $names)`
 - **`#[Override]`** on methods that override a parent or interface method
@@ -99,7 +109,7 @@ Target PHP 8.4+. Use these where they simplify code:
 
 ```php
 // Property hooks: replace trivial getters/setters and accessors
-final class Ticket
+class Ticket
 {
     public string $title {
         set => trim($value);
@@ -111,12 +121,12 @@ final class Ticket
 }
 
 // Asymmetric visibility: public read, restricted write
-final class Counter
+class Counter
 {
     public private(set) int $count = 0;
 }
 
-// new without wrapping parentheses when chaining
+// new without wrapping parentheses when chaining (the argument parentheses stay)
 $name = new Ticket()->title;
 
 // Array helpers
@@ -128,6 +138,65 @@ $allActive = array_all($items, fn (Item $item) => $item->isActive());
 - Use `#[Deprecated]` (native) instead of `@deprecated` docblocks for new deprecations
 - Do not use property hooks on Eloquent model attributes; use `casts()` and accessors (`Attribute::make()`) there
 - Prefer `public private(set)` over a public property plus a getter method
+
+### Control Flow
+- Happy path last: handle error conditions first, success case at the end
+- Avoid `else`: use early returns instead of nested conditions
+- Always use curly braces, even for single statements
+- Ternaries: one line only when short; otherwise each part on its own line
+
+```php
+if (! $user) {
+    return null;
+}
+
+if (! $user->isActive()) {
+    return null;
+}
+
+// Process the active user...
+
+$name = $isFoo ? 'foo' : 'bar';
+
+$result = $object instanceof Model
+    ? $object->name
+    : 'A default value';
+```
+
+### Comments
+Avoid comments; write expressive code instead.
+- If a comment explains *what* a block does, extract it into a well-named method
+- When a comment is needed, explain *why*, not what
+- Single line: `// ` with a space after the slashes
+- Multi-line blocks start with a single `*`
+
+```php
+// Retry once; the payment gateway drops the first request after idle.
+
+/*
+ * Multi-line comments use a single leading asterisk
+ * on each line.
+ */
+```
+
+### Whitespace
+- Blank lines between statements so code can breathe
+- Exception: a run of equivalent single-line operations stays together
+- No blank lines just inside `{}`
+
+```php
+$user = User::find($id);
+
+$ticket = $user->tickets()->create($data);
+
+$ticket->notify();
+
+$first = 1;
+$second = 2;
+$third = 3;
+```
+
+Pint's `blank_line_before_statement` enforces part of this; the rest is judgement.
 
 ### Comparisons
 Always use strict comparison (`===`/`!==`):
@@ -145,7 +214,7 @@ if ($name !== null) { }
 
 ### Formatting
 - Short array syntax: `['one', 'two']`
-- `new User` without parentheses when no arguments (per Pint config)
+- `new User` without parentheses when no arguments and nothing is chained (per Pint config); when chaining, keep them: `new User()->name`
 - Trailing commas in multi-line arrays and parameters
 
 ---
@@ -178,6 +247,12 @@ if ($name !== null) { }
 - **DTOs**: PascalCase, suffixed with `Data` (`TicketData`, `PlanData`)
 - **Enums**: PascalCase, singular (`Status`, `WeightTypes`)
 - **Traits**: PascalCase, prefixed with `Has` (`HasHashIds`, `HasActiveInactive`)
+- **Jobs**: PascalCase, action-based, no suffix (`CreateUser`, `SendEmailNotification`)
+- **Events**: PascalCase, tense-based (`UserRegistering`, `UserRegistered`)
+- **Listeners**: action + `Listener` suffix (`SendInvitationMailListener`)
+- **Commands**: action + `Command` suffix (`PublishScheduledPostsCommand`); the signature stays `app:kebab-case`
+- **Mailables**: purpose + `Mail` suffix (`AccountActivatedMail`)
+- **Resources**: plural + `Resource` suffix by default (`UsersResource`, `TicketsResource`), since one class serves `::make()` and `::collection()`; use singular when it only ever represents one thing (`StatsResource`, `CurrentUserResource`)
 
 ### Method Naming
 - General methods: camelCase, verb-first (`execute`, `authenticate`, `generateSlug`)

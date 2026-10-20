@@ -3,7 +3,7 @@
 ## Actions
 
 ### Overview
-Actions are single-purpose `final` classes that encapsulate business logic with a single `execute()` method.
+Actions are single-purpose classes that encapsulate business logic with a single `execute()` method.
 
 ### Basic Structure
 
@@ -17,11 +17,16 @@ namespace App\Actions\Tickets;
 use App\Data\TicketData;
 use App\Models\Ticket;
 
-final class CreateTicket
+class CreateTicket
 {
     public function execute(TicketData $data): Ticket
     {
-        return Ticket::create($data->toArray());
+        return Ticket::query()->create([
+            'title'       => $data->title,
+            'body'        => $data->body,
+            'user_id'     => $data->user_id,
+            'category_id' => $data->category_id,
+        ]);
     }
 }
 ```
@@ -29,6 +34,7 @@ final class CreateTicket
 ### Key Rules
 - Single responsibility: one action per class
 - Use DTOs for complex parameters
+- Map DTO fields to the model explicitly; never pass `$request->all()` or a whole DTO into `create()`/`update()`. Every column written must be listed in the model's `#[Fillable]` (non-fillable keys are silently dropped)
 - Return the created model, `void` for updates/deletes, or the computed result
 - Verb-first naming: `CreateTicket`, `UpdateItem`, `ConvertKilogramsToPounds`
 - Use constructor injection for dependencies
@@ -51,7 +57,7 @@ public function store(CreateTicket $createTicket, TicketData $data): Response
 ### Complex Actions
 
 ```php
-final class ProcessOrder
+class ProcessOrder
 {
     public function __construct(
         private readonly ValidateInventory $validateInventory,
@@ -62,7 +68,10 @@ final class ProcessOrder
     public function execute(OrderData $data): Order
     {
         $this->validateInventory->execute($data->items);
-        $order = Order::create($data->toArray());
+        $order = Order::query()->create([
+            'user_id' => $data->user_id,
+            'total' => $data->total,
+        ]);
         $this->createPayment->execute($order);
         $this->sendConfirmation->execute($order);
         return $order;
@@ -105,7 +114,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Tickets\StoreTicketRequest;
 use Illuminate\Http\RedirectResponse;
 
-final class StoreController extends Controller
+class StoreController extends Controller
 {
     public function __invoke(
         StoreTicketRequest $request,
@@ -129,13 +138,13 @@ use Illuminate\Routing\Attributes\Controllers\Authorize;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 
 #[Middleware('auth', 'verified')]
-final class ShowController extends Controller
+class ShowController extends Controller
 {
     #[Authorize('view', [Ticket::class, 'ticket'])]
     public function __invoke(Ticket $ticket): Response
     {
         return Inertia::render('Tickets/Show', [
-            'ticket' => TicketResource::make($ticket),
+            'ticket' => TicketsResource::make($ticket),
         ]);
     }
 }
@@ -146,6 +155,13 @@ final class ShowController extends Controller
 | `#[Middleware('auth')]` | Apply middleware to controller or method | `$this->middleware()` / route middleware |
 | `#[Authorize('ability', [Model::class])]` | Policy authorization on method | `$this->authorize()` |
 
+Pick one authorization style per controller: use `#[Authorize]` for simple policy checks on a route-bound model, and fall back to `$this->authorize()` / `Gate::` inside the method only when the check depends on runtime logic (for example, an ability that needs a value computed in the method). Do not stack both for the same ability.
+
+
+### Policy Naming
+- Policy methods use Laravel's standard names: `viewAny`, `view`, `create`, `update`, `delete`, `restore`, `forceDelete`
+- Use `view`, not `show`
+- Custom abilities and `Gate::define()` names are camelCase: `Gate::define('publishPost', ...)`
 
 ### Parameter Order
 1. Route model bindings
@@ -156,7 +172,7 @@ final class ShowController extends Controller
 Always use Form Requests for validation with array syntax:
 
 ```php
-final class StoreTicketRequest extends FormRequest
+class StoreTicketRequest extends FormRequest
 {
     public function rules(): array
     {
@@ -168,6 +184,8 @@ final class StoreTicketRequest extends FormRequest
     }
 }
 ```
+
+Prefer custom rule classes (`php artisan make:rule`) over `Validator::extend()`. Any string-registered rule uses a snake_case name, e.g. `organisation_type`.
 
 ### File Organization
 
@@ -263,7 +281,7 @@ Prefer `x-` component syntax over `@include`:
 - Simple formatting is acceptable: `{{ $date->format('M j, Y') }}`
 
 ### Translations
-Always use `__()` translation helper:
+Always use the `__()` translation helper; never use `@lang`:
 
 ```php
 <h1>{{ __('tickets.index.title') }}</h1>
