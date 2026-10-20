@@ -22,7 +22,7 @@ Apply Webminty's Laravel and PHP guidelines to keep code style consistent and La
 
 ## Workflow
 1. Identify the artifact (action, controller, model, Blade, test, job, DTO, enum, route, migration, etc.).
-2. Read only the reference file(s) listed under References that match the task.
+2. Before writing code, read the reference file(s) listed under References that match the task. Each holds the rules plus a canonical example (Action, controller, model, job, command, Pest test, Blade); match its shape.
 3. Apply the core Laravel principle first, then PHP standards, then section-specific rules.
 4. If a rule conflicts with existing project conventions, follow Laravel conventions and keep changes consistent.
 
@@ -55,72 +55,12 @@ Apply Webminty's Laravel and PHP guidelines to keep code style consistent and La
 
 ## Avoid
 - `dd()`, `dump()`, `ray()`, `var_dump()`, or `print_r` in committed code.
-- Instantiating models inside `boot()` or `booted()` — Laravel 13 throws a `LogicException`.
-
-## Examples
-```php
-// Action
-class CreateTicket
-{
-    public function execute(TicketData $data): Ticket
-    {
-        return Ticket::query()->create([
-            'title' => $data->title,
-            'body' => $data->body,
-            'user_id' => $data->user_id,
-            'category_id' => $data->category_id,
-        ]);
-    }
-}
-```
-
-```php
-// Model
-class Ticket extends Model
-{
-    use HasFactory;
-    use HasHashIds;
-
-    protected function casts(): array
-    {
-        return [
-            'is_active' => 'boolean',
-            'due_at' => 'datetime',
-        ];
-    }
-
-    #[Scope]
-    protected function active(Builder $query): void
-    {
-        $query->where('is_active', true);
-    }
-}
-```
-
-```php
-// Pest Test
-test('can create a ticket', function (): void {
-    $user = User::factory()->create();
-    $data = new TicketData(title: 'Test', body: 'Body', user_id: $user->id);
-    $ticket = app(CreateTicket::class)->execute($data);
-
-    expect($ticket)
-        ->toBeInstanceOf(Ticket::class)
-        ->title->toBe('Test');
-});
-```
-
-```blade
-@if($condition)
-    <x-ui.card>
-        {{ $slot }}
-    </x-ui.card>
-@endif
-```
+- Instantiating a model of the same class while it boots (inside `boot()`/`booted()`) — Laravel 13 throws a `LogicException`.
 
 ## References
 Read only what the task needs, all under `references/`:
-- `php-standards.md` — PHP standards, strict types, naming conventions, directory structure
+- `php-standards.md` — PHP standards, strict types, types, control flow, comments, docblocks
+- `naming-structure.md` — Naming conventions (classes, routes, database, files) and directory structure
 - `models-database.md` — Models, casts, scopes, Eloquent, migrations, `hash_id`
 - `actions-controllers-routes.md` — Actions, controllers, Form Requests, routes, Blade
 - `jobs-commands-api.md` — Jobs, console commands, API standards, batches vs pipelines

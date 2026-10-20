@@ -46,6 +46,19 @@ The rules themselves live in each skill's `SKILL.md` (core rules) and `reference
 
 Code quality tooling: Laravel Pint, PHPStan + Larastan (level 5), Rector, and Pest PHP.
 
+## Examples
+
+Each reference file pairs the rules with a canonical example. Browse them on GitHub:
+
+| Want to see | Look at |
+|---|---|
+| An Action, controller, Form Request, routes, Blade | [`actions-controllers-routes.md`](resources/boost/skills/webminty-laravel-standards/references/actions-controllers-routes.md) |
+| A model, scopes, migration | [`models-database.md`](resources/boost/skills/webminty-laravel-standards/references/models-database.md) |
+| A job, command, API resource | [`jobs-commands-api.md`](resources/boost/skills/webminty-laravel-standards/references/jobs-commands-api.md) |
+| A Pest test, architecture tests | [`testing-tooling.md`](resources/boost/skills/webminty-laravel-standards/references/testing-tooling.md) |
+| PHP language conventions | [`php-standards.md`](resources/boost/skills/webminty-laravel-standards/references/php-standards.md) |
+| Naming and directory structure | [`naming-structure.md`](resources/boost/skills/webminty-laravel-standards/references/naming-structure.md) |
+
 ## Per-Project File Conventions
 
 In addition to coding standards, this package mandates three documentation files at the root of every project that installs it. AI assistants will create and maintain these files automatically as work progresses.

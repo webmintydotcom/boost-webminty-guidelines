@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 - Added rules from Spatie's guidelines: docblocks (avoid unless needed), happy path last and multi-line ternaries, comments (avoid; explain why), whitespace, policy naming, `@lang` ban, class suffixes (events, listeners, commands, mailables, plural resources), command output, test structure/naming, snake_case config and `config/services.php`, custom validation rule naming
 - Resources are plural by default (`TicketsResource`), singular when they only represent one thing and commands carry a `Command` suffix in all examples
 - Code examples were run through `php -l` and Pint: `=>` aligned, class element order fixed, job properties separated, route example imports corrected
+- Naming conventions and directory structure moved out of `php-standards.md` into `naming-structure.md`; `SKILL.md` Examples section removed (each reference holds its own canonical example) and the README gains an Examples table
 - Testing docs no longer pin a Pest/PHPUnit version pairing
 
 ## [3.4.1] - 2026-10-08
