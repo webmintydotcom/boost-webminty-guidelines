@@ -2,7 +2,7 @@
 name: webminty-inertia-standards
 description: Apply Webminty's Inertia.js coding standards for any task that creates, edits, reviews, refactors, or formats Laravel controllers returning Inertia responses, HandleInertiaRequests middleware, shared data, or Inertia-specific testing patterns; covers the Laravel side of Inertia.js applications.
 license: MIT
-compatibility: Inertia.js v3+, Laravel 11+, PHP 8.2+
+compatibility: Inertia.js v3+, Laravel 13+, PHP 8.4+
 metadata:
   author: Webminty
 ---

@@ -48,7 +48,7 @@ final class ProcessOrder implements ShouldQueue
 }
 ```
 
-### Job Attributes (Laravel 13+)
+### Job Attributes
 
 Laravel 13 introduces declarative attributes for job configuration:
 
@@ -84,7 +84,8 @@ final class ProcessOrder implements ShouldQueue
 }
 ```
 
-On Laravel 12, continue using property-based configuration (`public int $tries = 3`, etc.).
+
+Other job attributes: `#[Delay]`, `#[MaxExceptions]`, `#[UniqueFor]`, `#[FailOnTimeout]`, `#[DeleteWhenMissingModels]`, `#[CountCrashesAsExceptions]`, `#[DebounceFor]`.
 
 ### Key Rules
 - Jobs must be `final` and implement `ShouldQueue`
@@ -94,7 +95,7 @@ On Laravel 12, continue using property-based configuration (`public int $tries =
 - Keep jobs small and focused
 - Always handle failures with `failed()` method
 - Use middleware for rate limiting and preventing overlaps
-- On Laravel 13+, prefer job attributes (`#[Tries]`, `#[Timeout]`, etc.) over property configuration
+- Prefer job attributes (`#[Tries]`, `#[Timeout]`, etc.) over property configuration
 
 ### Dispatching
 

@@ -2,7 +2,7 @@
 
 ## General Laravel
 
-### CSRF Protection (Laravel 13+)
+### CSRF Protection
 
 Laravel 13 renames `VerifyCsrfToken` to `PreventRequestForgery` and adds dual-layer protection (origin verification via `Sec-Fetch-Site` header + traditional CSRF token fallback). If you reference this middleware directly, use the name appropriate for your Laravel version. The old name remains as a deprecated alias in Laravel 13 but should be updated.
 
@@ -101,7 +101,7 @@ final class InsufficientFundsException extends Exception
 ## Testing
 
 ### Framework
-All projects use **Pest PHP**. Laravel 12 uses Pest 3 / PHPUnit 11. Laravel 13 requires Pest 4 / PHPUnit 12.
+All projects use **Pest PHP**. Use the Pest and PHPUnit versions required by the Laravel 13 skeleton and `pestphp/pest-plugin-laravel`; do not pin a version pairing in code or docs.
 
 ### Run Tests
 

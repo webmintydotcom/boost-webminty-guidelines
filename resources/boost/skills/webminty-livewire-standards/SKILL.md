@@ -2,7 +2,7 @@
 name: webminty-livewire-standards
 description: Apply Webminty's Livewire coding standards for any task that creates, edits, reviews, refactors, or formats Livewire components (single-file, multi-file, or class-based), Livewire form objects, islands, slots, or Blade templates using `wire:*` directives; use for full-page components, nested components, form handling, event listeners, and Livewire-specific testing patterns.
 license: MIT
-compatibility: Livewire 4+, Laravel 11+, PHP 8.2+
+compatibility: Livewire 4+, Laravel 13+, PHP 8.4+
 metadata:
   author: Webminty
 ---

@@ -10,7 +10,7 @@
 
 ### Class Conventions
 - Actions: `final class VerbNoun { public function execute(): ... }`
-- Models: `final class Noun extends Model` with `$guarded = ['id']` and `casts()` method
+- Models: `final class Noun extends Model` with `#[Fillable([...])]` and `casts()` method
 - DTOs: `final class NounData extends Data`
 - Jobs: `final class VerbNoun implements ShouldQueue`
 - Commands: `final class VerbNoun extends Command` with `app:kebab-case` signature
@@ -20,7 +20,7 @@
 - Use Form Requests for controllers
 
 ### Database
-- `$guarded = ['id']` not `$fillable`
+- `#[Fillable([...])]` not `$guarded`
 - `casts()` method not `$casts` property
 - `#[Scope]` attribute not `scopeX()` methods
 - `hash_id` pattern for public-facing IDs
@@ -34,8 +34,7 @@
 - No `dd()`, `dump()`, `ray()`, `var_dump()` in committed code
 - Run `composer quality` (Pint + PHPStan + Pest) before committing
 
-### Laravel 13+ Additions
+### Laravel 13 Notes
 - Prefer declarative attributes for model config (`#[Table]`, `#[UsePolicy]`), controller middleware (`#[Middleware]`, `#[Authorize]`), and job config (`#[Tries]`, `#[Timeout]`)
 - `VerifyCsrfToken` renamed to `PreventRequestForgery`
 - Do not instantiate models inside `boot()` or `booted()` — use `booted()` for event callbacks only
-- Requires Pest 4 / PHPUnit 12

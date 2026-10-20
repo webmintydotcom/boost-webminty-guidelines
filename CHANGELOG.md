@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [4.0.0] - 2026-10-19
+
+### Changed
+- **Breaking:** baseline is now PHP 8.4+ and Laravel 13+ (`composer.json`, README, skill `compatibility` frontmatter); Laravel 11/12 notes removed
+- Model attribute table expanded (`#[Fillable]`, `#[Hidden]`, `#[Visible]`, `#[Appends]`, `#[Touches]`, `#[ObservedBy]`, `#[UseFactory]`, `#[CollectedBy]`, `#[UseResource]`, `#[RouteKey]`); mass-assignment rule is now `#[Fillable([...])]` instead of `$guarded = ['id']`
+- Listed the remaining queue job attributes
+- `php-standards.md` gains a PHP 8.4 section (property hooks, asymmetric visibility, `new` chaining, `array_find`/`array_any`/`array_all`, `#[Deprecated]`) and the PHP 8+ list now includes `readonly` classes, `never`, first-class callables and `#[Override]`
+- Testing docs no longer pin a Pest/PHPUnit version pairing
+
 ## [3.4.1] - 2026-10-08
 
 ### Fixed

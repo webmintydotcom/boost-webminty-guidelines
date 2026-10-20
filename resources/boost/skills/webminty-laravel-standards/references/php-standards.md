@@ -89,6 +89,45 @@ enum WeightTypes: string
 - **Named arguments** for many parameters
 - **Null coalescing**: `$name = $user->name ?? 'Guest'`
 - **Null coalescing assignment**: `$this->cache ??= new Cache()`
+- **`readonly` classes** for immutable value objects: `final readonly class Money`
+- **`never`** return type for methods that always throw or exit
+- **First-class callable syntax**: `array_map(strtoupper(...), $names)`
+- **`#[Override]`** on methods that override a parent or interface method
+
+### PHP 8.4 Features
+Target PHP 8.4+. Use these where they simplify code:
+
+```php
+// Property hooks: replace trivial getters/setters and accessors
+final class Ticket
+{
+    public string $title {
+        set => trim($value);
+    }
+
+    public string $summary {
+        get => str($this->body)->limit(80)->toString();
+    }
+}
+
+// Asymmetric visibility: public read, restricted write
+final class Counter
+{
+    public private(set) int $count = 0;
+}
+
+// new without wrapping parentheses when chaining
+$name = new Ticket()->title;
+
+// Array helpers
+$first = array_find($items, fn (Item $item) => $item->isActive());
+$hasActive = array_any($items, fn (Item $item) => $item->isActive());
+$allActive = array_all($items, fn (Item $item) => $item->isActive());
+```
+
+- Use `#[Deprecated]` (native) instead of `@deprecated` docblocks for new deprecations
+- Do not use property hooks on Eloquent model attributes; use `casts()` and accessors (`Attribute::make()`) there
+- Prefer `public private(set)` over a public property plus a getter method
 
 ### Comparisons
 Always use strict comparison (`===`/`!==`):
@@ -167,7 +206,7 @@ if ($name !== null) { }
 app/
 ├── Actions/              # Business logic action classes
 ├── Data/                 # Spatie LaravelData DTOs
-├── Enums/                # PHP 8.1+ Enums
+├── Enums/                # Enums
 ├── Http/
 │   ├── Controllers/      # HTTP controllers
 │   ├── Middleware/        # Custom middleware

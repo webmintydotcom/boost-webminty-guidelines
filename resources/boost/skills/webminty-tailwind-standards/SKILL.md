@@ -2,7 +2,7 @@
 name: webminty-tailwind-standards
 description: Apply Webminty's Tailwind CSS standards for any task that creates, edits, reviews, refactors, or formats styling in Blade, Livewire, Inertia (React/Vue/Svelte), or plain HTML; covers Tailwind v4 CSS-first setup, theme tokens, utility usage and class order, variants and responsive patterns, component extraction, dark mode, and v3-to-v4 migration concerns.
 license: MIT
-compatibility: Tailwind CSS v4+, Laravel 11+, PHP 8.2+
+compatibility: Tailwind CSS v4+, Laravel 13+, PHP 8.4+
 metadata:
   author: Webminty
 ---

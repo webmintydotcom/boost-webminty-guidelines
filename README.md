@@ -4,7 +4,8 @@ A [Laravel Boost](https://laravelboost.com) plugin that provides [Webminty's](ht
 
 ## Requirements
 
-- PHP 8.2+
+- PHP 8.4+
+- Laravel 13+
 - Laravel Boost
 
 ## Installation
@@ -14,6 +15,8 @@ composer require webminty/boost-webminty-guidelines --dev
 ```
 
 The package auto-discovers via Laravel's package discovery — no additional setup required.
+
+Projects on Laravel 11/12 or PHP below 8.4 should stay on the 3.x releases (`composer require webminty/boost-webminty-guidelines:^3.0 --dev`).
 
 ## What It Does
 
@@ -35,7 +38,7 @@ The rules themselves live in each skill's `SKILL.md` (core rules) and `reference
 
 | Skill | Covers |
 |---|---|
-| `webminty-laravel-standards` | PHP/PSR-12, strict types, `final` classes, naming, models, migrations, Actions, controllers, routes, jobs, commands, API, Pest testing |
+| `webminty-laravel-standards` | PHP 8.4/PSR-12, strict types, `final` classes, naming, Laravel 13 attributes, models, migrations, Actions, controllers, routes, jobs, commands, API, Pest testing |
 | `webminty-tailwind-standards` | Tailwind v4 CSS-first setup, `@theme` tokens, utilities, class ordering, variants, dark mode, accessibility, component extraction |
 | `webminty-livewire-standards` | Livewire 4 components, attributes, islands, slots, form objects, navigation, testing |
 | `webminty-inertia-standards` | Inertia controllers, shared data, partial reloads, forms, SSR, testing |

@@ -38,9 +38,9 @@ Apply Webminty's Laravel and PHP guidelines to keep code style consistent and La
 - Use string interpolation over concatenation.
 - Use strict comparison (`===`/`!==`).
 - Use kebab-case URLs, dot-notation route names, and snake_case database columns.
-- Use `$guarded = ['id']` instead of `$fillable`.
+- Use the `#[Fillable([...])]` attribute to list mass-assignable columns; do not use `$guarded` or `#[Unguarded]`.
 - Use the `casts()` method instead of the `$casts` property.
-- Use the `#[Scope]` attribute for query scopes (Laravel 11+), not `scopeX()` methods.
+- Use the `#[Scope]` attribute for query scopes, not `scopeX()` methods.
 - Use anonymous migrations (`return new class`), the `hash_id` pattern for public-facing IDs, and `is_`/`has_` prefixes for boolean columns.
 - Use Form Requests for controller validation, with array notation for rules (not pipe syntax).
 - Controllers stay thin: delegate business logic to Actions (`final` classes with a single `execute()` method).
@@ -71,8 +71,6 @@ final class Ticket extends Model
 {
     use HasFactory;
     use HasHashIds;
-
-    protected $guarded = ['id'];
 
     protected function casts(): array
     {

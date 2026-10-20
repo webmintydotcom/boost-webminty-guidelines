@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Models\Traits\HasHashIds;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,13 +21,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+#[Fillable(['title', 'body', 'user_id', 'category_id', 'is_active', 'due_at', 'settings', 'status'])]
 final class Ticket extends Model
 {
     use HasFactory;
     use HasHashIds;
     use SoftDeletes;
-
-    protected $guarded = ['id'];
 
     protected function casts(): array
     {
@@ -57,9 +57,9 @@ final class Ticket extends Model
 }
 ```
 
-### Model Attributes (Laravel 13+)
+### Model Attributes
 
-Laravel 13 introduces declarative attributes for model configuration. Use these instead of properties when available:
+Laravel 13 introduces declarative attributes for model configuration. Use these instead of properties:
 
 ```php
 use Illuminate\Database\Eloquent\Attributes\Table;
@@ -84,17 +84,25 @@ final class Ticket extends Model
 | `#[WithoutTimestamps]` | Disable timestamps | `public $timestamps = false` |
 | `#[WithoutIncrementing]` | Disable auto-increment | `public $incrementing = false` |
 | `#[DateFormat('U')]` | Custom date format | `protected $dateFormat` |
+| `#[Fillable([...])]` | Mass-assignment allowlist (our default) | `protected $fillable` |
+| `#[Hidden([...])]` / `#[Visible([...])]` | Serialization hide/allow list | `protected $hidden` / `$visible` |
+| `#[Appends([...])]` | Accessors appended on serialization | `protected $appends` |
+| `#[Touches('relation')]` | Touch parent timestamps | `protected $touches` |
+| `#[ObservedBy(Observer::class)]` | Register observer | `Model::observe()` in a provider |
+| `#[UseFactory(Factory::class)]` | Custom factory | `newFactory()` |
+| `#[CollectedBy(Collection::class)]` | Custom collection class | `newCollection()` |
+| `#[UseResource(Resource::class)]` | Default API resource | Manual resource wiring |
+| `#[RouteKey('hash_id')]` | Route binding key | `getRouteKeyName()` |
 
-On Laravel 12, continue using the property-based approach.
 
 ### Key Rules
-- Use `$guarded = ['id']` instead of `$fillable`
+- List mass-assignable columns with `#[Fillable([...])]`; do not use `$guarded` or `#[Unguarded]`
 - Use the `casts()` method (not `$casts` property)
-- Use `#[Scope]` attribute for query scopes (Laravel 11+)
+- Use `#[Scope]` attribute for query scopes
 - Always type relationship return values (`BelongsTo`, `HasMany`, etc.)
 - Use one trait per line
 - Singular names for belongsTo/hasOne, plural for hasMany/belongsToMany
-- On Laravel 13+, prefer model attributes (`#[Table]`, `#[UsePolicy]`, etc.) over property configuration
+- Prefer model attributes (`#[Table]`, `#[UsePolicy]`, etc.) over property configuration
 - Do not instantiate models inside `boot()` or `booted()` — Laravel 13 throws a `LogicException` if you do
 
 ### Common Cast Types
@@ -161,7 +169,7 @@ public function boot(): void
 }
 ```
 
-### Model boot() Restriction (Laravel 13+)
+### Model boot() Restriction
 
 Laravel 13 throws a `LogicException` if you instantiate a model inside `boot()` or `booted()`. Move any model-creating logic to observers or event listeners. Use `booted()` (not `boot()`) for registering model event callbacks — this is compatible with both Laravel 12 and 13.
 

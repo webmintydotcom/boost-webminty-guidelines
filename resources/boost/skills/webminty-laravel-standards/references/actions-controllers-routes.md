@@ -120,7 +120,7 @@ final class StoreController extends Controller
 }
 ```
 
-### Controller Attributes (Laravel 13+)
+### Controller Attributes
 
 Laravel 13 introduces declarative attributes for middleware and authorization on controllers:
 
@@ -146,7 +146,6 @@ final class ShowController extends Controller
 | `#[Middleware('auth')]` | Apply middleware to controller or method | `$this->middleware()` / route middleware |
 | `#[Authorize('ability', [Model::class])]` | Policy authorization on method | `$this->authorize()` |
 
-On Laravel 12, continue using route-based middleware and manual `$this->authorize()` calls.
 
 ### Parameter Order
 1. Route model bindings
