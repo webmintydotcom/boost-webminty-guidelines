@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 - Resources are plural by default (`TicketsResource`), singular when they only represent one thing and commands carry a `Command` suffix in all examples
 - Code examples were run through `php -l` and Pint: `=>` aligned, class element order fixed, job properties separated, route example imports corrected
 - Naming conventions and directory structure moved out of `php-standards.md` into `naming-structure.md`; `SKILL.md` Examples section removed (each reference holds its own canonical example) and the README gains an Examples table
+- New `tooling-config.md` reference documenting the Pint, PHPStan and Rector settings; `testing-tooling.md` points to it
 - Testing docs no longer pin a Pest/PHPUnit version pairing
 
 ## [3.4.1] - 2026-10-08

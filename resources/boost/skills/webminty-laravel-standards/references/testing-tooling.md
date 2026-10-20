@@ -73,27 +73,7 @@ class InsufficientFundsException extends Exception
 | PHPStan + Larastan | Static analysis (level 5) |
 | Rector | Automated refactoring |
 
-### Key Pint Rules
-- `declare_strict_types`: Adds `declare(strict_types=1)`
-- `strict_comparison`: Uses `===` instead of `==`
-- `void_return`: Adds `void` return types
-- `new_with_parentheses: false`: `new User` instead of `new User()`
-- `trailing_comma_in_multiline`: Trailing commas
-- `ordered_imports`: Alphabetical imports
-
-### Composer Scripts
-
-```json
-{
-    "scripts": {
-        "lint": "./vendor/bin/pint",
-        "lint:check": "./vendor/bin/pint --test",
-        "analyse": "./vendor/bin/phpstan analyse",
-        "test": "./vendor/bin/pest",
-        "quality": ["@lint:check", "@analyse", "@test"]
-    }
-}
-```
+See `tooling-config.md` for the Pint, PHPStan and Rector settings and what they mean for the code you write.
 
 ---
 
