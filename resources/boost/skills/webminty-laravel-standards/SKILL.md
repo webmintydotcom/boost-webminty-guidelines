@@ -65,5 +65,6 @@ Read only what the task needs, all under `references/`:
 - `actions-controllers-routes.md` — Actions, controllers, Form Requests, routes, Blade
 - `jobs-commands-api.md` — Jobs, console commands, API standards, batches vs pipelines
 - `testing-tooling.md` — General Laravel, Pest testing, architecture tests
+- `testing-browser.md` — Pest browser tests: when to write them, setup, selectors, waiting, running
 - `tooling-config.md` — Pint, PHPStan and Rector settings and what they mean for the code you write
 - `quick-reference.md` — One-page cheat sheet and Laravel 13 notes

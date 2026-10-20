@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [4.0.1] - 2026-10-20
+
+### Added
+- `testing-browser.md` reference for Pest browser tests (`pest-plugin-browser`): when to write one, setup, how selectors resolve, waiting, and running; linked from the laravel skill and the README
+
+### Fixed
+- Native union types are written with spaces around `|` (`string | int`) to match Pint's `types_spaces` rule; `tooling-config.md` and the PHP standards examples said otherwise
+
 ## [4.0.0] - 2026-10-19
 
 ### Changed

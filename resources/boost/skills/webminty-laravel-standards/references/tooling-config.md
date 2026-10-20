@@ -21,7 +21,7 @@ Write code that already passes these tools so no fix-up round is needed. The set
 | `new_with_parentheses: false` | `new User`; keep the parentheses when chaining: `new User()->name` |
 | `blank_line_before_statement` | Blank line before `return`, `if`, `foreach` and similar |
 | `method_chaining_indentation` | Each chained call on its own line, indented |
-| `types_spaces` (single) | `int|string`, with no spaces around `|` |
+| `types_spaces` (single) | Spaces around `|` in native union types: `string | int` |
 
 ## PHPStan
 

@@ -56,6 +56,7 @@ Each reference file pairs the rules with a canonical example. Browse them on Git
 | A model, scopes, migration | [`models-database.md`](resources/boost/skills/webminty-laravel-standards/references/models-database.md) |
 | A job, command, API resource | [`jobs-commands-api.md`](resources/boost/skills/webminty-laravel-standards/references/jobs-commands-api.md) |
 | A Pest test, architecture tests | [`testing-tooling.md`](resources/boost/skills/webminty-laravel-standards/references/testing-tooling.md) |
+| A Pest browser test | [`testing-browser.md`](resources/boost/skills/webminty-laravel-standards/references/testing-browser.md) |
 | PHP language conventions | [`php-standards.md`](resources/boost/skills/webminty-laravel-standards/references/php-standards.md) |
 | Naming and directory structure | [`naming-structure.md`](resources/boost/skills/webminty-laravel-standards/references/naming-structure.md) |
 

@@ -22,14 +22,14 @@ namespace App\Actions\Tickets;
 ### Type Hints
 - All method parameters must have type hints
 - All methods must declare return types (including `void`)
-- Use union types for flexible parameters: `int|string|Item`
+- Use union types for flexible parameters: `int | string | Item`
 - Use `?Type` for nullable types
 
 ```php
 public function execute(TicketData $data): Ticket
 public function delete(int $id): void
 public function find(string $hashId): ?User
-public function execute(int|string|Item $item): void
+public function execute(int | string | Item $item): void
 ```
 
 ### Docblocks
